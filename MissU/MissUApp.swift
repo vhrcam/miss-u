@@ -70,17 +70,27 @@ struct MainTabs: View {
 
     var body: some View {
         TabView(selection: $tab) {
-            Tab("Home", systemImage: "house.fill", value: 0) { HomeView() }
-            Tab("Customize", systemImage: "paintbrush.fill", value: 1) { CustomizeView() }
-            Tab("Activities", systemImage: "sparkles", value: 2) { ActivitiesView() }
-            Tab("Settings", systemImage: "gearshape.fill", value: 3) { SettingsView() }
+            Tab("Home", systemImage: "house.fill", value: 0) { page(HomeView()) }
+            Tab("Customize", systemImage: "paintbrush.fill", value: 1) { page(CustomizeView()) }
+            Tab("Activities", systemImage: "sparkles", value: 2) { page(ActivitiesView()) }
+            Tab("Settings", systemImage: "gearshape.fill", value: 3) { page(SettingsView()) }
         }
         .tint(Theme.rose)
+        .overlay(alignment: .bottom) {
+            FloatingTabBar(selection: $tab).padding(.bottom, 2)
+        }
+        .ignoresSafeArea(.keyboard)
         #if DEBUG
         .onAppear {
             let args = CommandLine.arguments
             if let i = args.firstIndex(of: "-tab"), i + 1 < args.count, let n = Int(args[i + 1]) { tab = n }
         }
         #endif
+    }
+
+    private func page(_ content: some View) -> some View {
+        content
+            .toolbar(.hidden, for: .tabBar)
+            .safeAreaInset(edge: .bottom) { Color.clear.frame(height: 64) }
     }
 }

@@ -16,10 +16,7 @@ struct CustomizeView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     ScreenTitle(title: "Customize")
-                    Picker("Section", selection: $section) {
-                        ForEach(Section.allCases) { Text($0.rawValue).tag($0) }
-                    }
-                    .pickerStyle(.segmented)
+                    PillPicker(selection: $section, options: Section.allCases) { $0.rawValue }
                     switch section {
                     case .me: mePanel
                     case .mine: MyWidgetPanel()

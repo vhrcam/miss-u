@@ -4,6 +4,7 @@ struct ConnectPanel: View {
     @Environment(AppModel.self) private var model
     @State private var username = ""
     @State private var sending = false
+    @State private var accepted = 0
 
     private var cleaned: String {
         username.trimmingCharacters(in: .whitespaces).lowercased().replacingOccurrences(of: "@", with: "")
@@ -44,12 +45,9 @@ struct ConnectPanel: View {
                             .frame(height: 52)
                             .background(Theme.cream, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
                             Button(action: send) {
-                                Image(systemName: "arrow.up")
-                                    .font(.system(size: 18, weight: .bold))
-                                    .foregroundStyle(.white)
-                                    .frame(width: 52, height: 52)
-                                    .background(Theme.rose.opacity(canSend ? 1 : 0.4), in: Circle())
+                                Image(systemName: "arrow.up").font(.system(size: 18, weight: .heavy))
                             }
+                            .buttonStyle(.bubble(Theme.rose, size: 52))
                             .disabled(!canSend)
                             .accessibilityLabel("Send request")
                         }
@@ -86,22 +84,20 @@ struct ConnectPanel: View {
             }
             Spacer()
             Button { Task { await model.respond(to: request, accept: false) } } label: {
-                Image(systemName: "xmark")
-                    .font(.system(size: 15, weight: .bold))
-                    .frame(width: 42, height: 42)
-                    .background(Theme.cream, in: Circle())
+                Image(systemName: "xmark").font(.system(size: 15, weight: .heavy))
             }
+            .buttonStyle(.bubble(.white, size: 42))
             .accessibilityLabel("Decline")
-            Button { Task { await model.respond(to: request, accept: true) } } label: {
-                Image(systemName: "checkmark")
-                    .font(.system(size: 15, weight: .bold))
-                    .foregroundStyle(.white)
-                    .frame(width: 42, height: 42)
-                    .background(Theme.rose, in: Circle())
+            Button {
+                accepted += 1
+                Task { await model.respond(to: request, accept: true) }
+            } label: {
+                Image(systemName: "checkmark").font(.system(size: 15, weight: .heavy))
             }
+            .buttonStyle(.bubble(Theme.rose, size: 42))
+            .heartBurst(accepted)
             .accessibilityLabel("Accept")
         }
-        .buttonStyle(.plain)
         .card()
     }
 }
@@ -197,6 +193,7 @@ struct PartnerWidgetPanel: View {
     var onSent: () -> Void = {}
     @State private var style = WidgetStyle()
     @State private var sending = false
+    @State private var sent = 0
 
     var body: some View {
         if let state = model.state, let partner = state.partner {
@@ -212,7 +209,9 @@ struct PartnerWidgetPanel: View {
                         Task {
                             sending = true
                             if await model.stylePartnerWidget(style) {
+                                sent += 1
                                 model.toast = "Sent to @\(partner.username)'s widget"
+                                try? await Task.sleep(for: .milliseconds(700))
                                 onSent()
                             }
                             sending = false
@@ -221,6 +220,7 @@ struct PartnerWidgetPanel: View {
                         if sending { ProgressView().tint(.white) } else { Text("Send to @\(partner.username)") }
                     }
                     .buttonStyle(.primary)
+                    .heartBurst(sent)
                     .disabled(sending || style == state.partnerWidget?.style)
                 } else {
                     Label("@\(partner.username) turned off widget changes.", systemImage: "lock.fill")

@@ -80,10 +80,7 @@ struct WidgetEditor: View {
             }
             VStack(alignment: .leading, spacing: 8) {
                 Text("Character").font(.rounded(15, .bold)).opacity(0.65)
-                Picker("Character", selection: $style.spot) {
-                    ForEach(CharacterSpot.allCases) { Text($0.title).tag($0) }
-                }
-                .pickerStyle(.segmented)
+                PillPicker(selection: $style.spot, options: CharacterSpot.allCases) { $0.title }
             }
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
