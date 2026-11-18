@@ -85,9 +85,9 @@ extension AvatarView {
                 let m = motion(at: t)
                 ZStack {
                     ZStack {
-                        Stack(layers: base)
-                        Stack(layers: blinking(at: t) ? blink : face)
-                        Stack(layers: top)
+                        Stack(layers: base).equatable()
+                        Stack(layers: blinking(at: t) ? blink : face).equatable()
+                        Stack(layers: top).equatable()
                     }
                     .visualEffect { content, proxy in
                         content
