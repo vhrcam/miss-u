@@ -108,12 +108,23 @@ extension AvatarView {
         }
 
         func motion(at t: Double) -> Motion {
-            let breath = sin(t * 2 * .pi / 3.2)
-            return Motion(sx: 1 - 0.012 * breath, sy: 1 + 0.02 * breath)
+            let sleepy = activity == .sleeping
+            let breath = sin(t * 2 * .pi / (sleepy ? 4.2 : 3.2))
+            var m = Motion(sx: 1 - (sleepy ? 0.016 : 0.012) * breath, sy: 1 + (sleepy ? 0.03 : 0.02) * breath)
+            switch activity {
+            case .music: m.tilt = 4 * sin(t * 2 * .pi / 1.6)
+            case .gaming: m.tilt = 2.5 * sin(t * 2 * .pi / 2.4)
+            case .missingYou: m.tilt = 2 * sin(t * 2 * .pi / 3)
+            case .exercising: m.hop = 2.4 * abs(sin(t * .pi / 0.8))
+            default: break
+            }
+            return m
         }
 
         func blinking(at t: Double) -> Bool {
-            t.truncatingRemainder(dividingBy: 4.4) < 0.14
+            let cycle = t.truncatingRemainder(dividingBy: 4.4)
+            let twice = Int(t / 4.4) % 3 == 0
+            return cycle < 0.14 || (twice && cycle > 0.3 && cycle < 0.42)
         }
 
         func effects(at t: Double?) -> [Layer] {
