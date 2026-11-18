@@ -132,10 +132,9 @@ extension AvatarView {
 
     static var mug: [Layer] {
         [
-            .solid(Stack.outline(circle(60.5, 73, 5.2), 3.4), Theme.cream, 1.6),
-            .solid(Path(roundedRect: CGRect(x: 40.5, y: 63.5, width: 19, height: 19.5), cornerRadius: 4.5), Theme.cream),
-            .flat(oval(50, 65.6, 7.6, 1.8), Color(hex: 0x8A5A44)),
-            .solid(HeartShape().path(in: CGRect(x: 46.2, y: 70.5, width: 7.6, height: 6.8)), Theme.rose, 1.5)
+            .solid(Path(roundedRect: CGRect(x: 39.5, y: 62.5, width: 21, height: 21), cornerRadius: 5), Theme.cream),
+            .flat(oval(50, 64.8, 8.4, 1.9), Color(hex: 0x8A5A44)),
+            .solid(HeartShape().path(in: CGRect(x: 45.8, y: 70.5, width: 8.4, height: 7.5)), Theme.rose, 1.5)
         ]
     }
 

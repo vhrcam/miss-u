@@ -30,10 +30,10 @@ extension AvatarView {
     static func hand(_ activity: ActivityKind?) -> CGPoint {
         switch activity {
         case .shopping: CGPoint(x: 65, y: 68.5)
-        case .gaming: CGPoint(x: 62, y: 78.5)
+        case .gaming: CGPoint(x: 65.5, y: 72.5)
         case .studying: CGPoint(x: 65, y: 72)
         case .working: CGPoint(x: 60, y: 80)
-        case .coffee: CGPoint(x: 57.5, y: 82)
+        case .coffee: CGPoint(x: 61, y: 73.5)
         case .tv: CGPoint(x: 62.5, y: 74)
         default: CGPoint(x: 63.5, y: 67.5)
         }
@@ -66,7 +66,7 @@ extension AvatarView {
                 + sleeved(capsule(74, 59, 86.5, 46.5, 4.8), circle(74, 58, 6.5), skin, outfit, shirt)
         case .hold:
             let hand = hand(activity)
-            return sleeved(pair(capsule(72.5, 63, hand.x, hand.y, 5)), pair(circle(72.5, 63, 6.5)), skin, outfit, shirt)
+            return sleeved(pair(capsule(71, 65, hand.x, hand.y, 4.8)), pair(circle(71, 65, 6.5)), skin, outfit, shirt)
         }
     }
 
