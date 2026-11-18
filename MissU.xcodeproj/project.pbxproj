@@ -43,28 +43,16 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		8E610CBF7EAA57991600638E /* MissUWidget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			explicitFileTypes = {
-			};
-			explicitFolders = (
-			);
 			path = MissUWidget;
 			sourceTree = "<group>";
 		};
 		B4CECA51A84A592C93A9F573 /* Shared */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			explicitFileTypes = {
-			};
-			explicitFolders = (
-			);
 			path = Shared;
 			sourceTree = "<group>";
 		};
 		D494590886129D1EA0FE41BA /* MissU */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			explicitFileTypes = {
-			};
-			explicitFolders = (
-			);
 			path = MissU;
 			sourceTree = "<group>";
 		};
@@ -141,8 +129,8 @@
 				0A45B0A8647E47A6275762B4 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				D494590886129D1EA0FE41BA /* MissU */,
 				B4CECA51A84A592C93A9F573 /* Shared */,
+				D494590886129D1EA0FE41BA /* MissU */,
 			);
 			name = MissU;
 			packageProductDependencies = (
