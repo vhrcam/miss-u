@@ -36,9 +36,12 @@ extension AvatarView {
 
         init(config: AvatarConfig, activity: ActivityKind?) {
             self.activity = activity
+            let hatted = config.accessory == .beanie || config.accessory == .cap
+            base += hairBack(config.hair, config.color.deep, hatted: hatted)
             base += feet(config.color)
             base += sideArms(config.color.fill)
             base += body(config.color)
+            base += hairFront(config.hair, config.color.deep)
             face = AvatarView.face(.happy, config.presentation)
             blink = AvatarView.face(.happy, config.presentation, blink: true)
         }
