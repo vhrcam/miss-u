@@ -4,6 +4,7 @@ struct HomeView: View {
     @Environment(AppModel.self) private var model
     @State private var picking = false
     @State private var styling = false
+    @State private var bursts: [InteractionKind: Int] = [:]
 
     var body: some View {
         NavigationStack {
@@ -13,6 +14,7 @@ struct HomeView: View {
                     if let state = model.state {
                         if let partner = state.partner {
                             duo(me: state.me, partner: partner)
+                            love(for: partner)
                             if state.myWidget.byPartner {
                                 restyled(by: partner)
                             }
@@ -114,6 +116,29 @@ struct HomeView: View {
         )
         .contentShape(Rectangle())
         .onTapGesture { picking = true }
+    }
+
+    private func love(for partner: Person) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Send some love").font(.rounded(22, .heavy))
+            HStack(spacing: 0) {
+                ForEach(InteractionKind.allCases) { kind in
+                    VStack(spacing: 6) {
+                        Button {
+                            bursts[kind, default: 0] += 1
+                            Task { await model.sendInteraction(kind) }
+                        } label: {
+                            Text(kind.emoji).font(.system(size: 26))
+                        }
+                        .buttonStyle(.bubble(.white, size: 62))
+                        .heartBurst(bursts[kind, default: 0])
+                        .accessibilityLabel("Send @\(partner.username) a \(kind.title.lowercased())")
+                        Text(kind.title).font(.rounded(13, .bold)).opacity(0.6)
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+            }
+        }
     }
 
     private func restyled(by partner: Person) -> some View {
