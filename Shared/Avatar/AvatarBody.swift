@@ -26,7 +26,15 @@ extension AvatarView {
         [.solid(pair(oval(41, 86, 7, 4.8)), color.fill)]
     }
 
-    static func sideArms(_ fill: Color) -> [Layer] {
-        [.solid(pair(oval(79.5, 64, 5, 7.6).applying(turn(-52, 79.5, 64))), fill)]
+    static func sideArms(_ skin: Color, _ outfit: Outfit, _ shirt: Color) -> [Layer] {
+        let arm = pair(oval(79.5, 64, 5, 7.6).applying(turn(-52, 79.5, 64)))
+        switch outfit {
+        case .hoodie, .sweater:
+            return [.solid(arm, shirt)]
+        case .tee:
+            return [.solid(arm, skin), .solid(arm.intersection(pair(circle(76.5, 60, 6.5))), shirt, 1.6)]
+        case .overalls, .dress:
+            return [.solid(arm, skin)]
+        }
     }
 }

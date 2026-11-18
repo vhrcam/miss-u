@@ -39,8 +39,9 @@ extension AvatarView {
             let hatted = config.accessory == .beanie || config.accessory == .cap
             base += hairBack(config.hair, config.color.deep, hatted: hatted)
             base += feet(config.color)
-            base += sideArms(config.color.fill)
+            base += sideArms(config.color.fill, config.outfit, config.shirt.fill)
             base += body(config.color)
+            base += outfit(config.outfit, config.shirt)
             base += hairFront(config.hair, config.color.deep)
             face = AvatarView.face(.happy, config.presentation)
             blink = AvatarView.face(.happy, config.presentation, blink: true)
