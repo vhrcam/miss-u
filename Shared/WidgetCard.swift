@@ -83,9 +83,14 @@ struct WidgetContent: View {
         person?.username ?? "miss u"
     }
 
+    private var love: Interaction? {
+        snapshot?.interaction.flatMap { $0.isRecent(at: date) ? $0 : nil }
+    }
+
     private var status: String {
         if snapshot == nil { return "Open Miss U to start" }
         if person == nil { return "Add your person" }
+        if let love { return "\(love.kind.sentence.capitalizedFirst) \(love.kind.emoji)" }
         return activity?.title ?? ""
     }
 
@@ -120,7 +125,9 @@ struct WidgetContent: View {
             avatar.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: style.spot.alignment)
             VStack(alignment: style.spot.horizontal, spacing: 0) {
                 Text(name).font(.system(size: 14, weight: .heavy, design: .rounded))
-                if !status.isEmpty {
+                if love != nil {
+                    Text(status).font(.system(size: 11, weight: .bold, design: .rounded)).foregroundStyle(Theme.rose)
+                } else if !status.isEmpty {
                     Text(status).font(.system(size: 11, weight: .semibold, design: .rounded)).opacity(0.6)
                 }
             }
@@ -140,7 +147,12 @@ struct WidgetContent: View {
                     .font(.system(size: 22, weight: .heavy, design: .rounded))
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
-                if !status.isEmpty {
+                if love != nil {
+                    Text(status)
+                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                        .foregroundStyle(Theme.rose)
+                        .lineLimit(1)
+                } else if !status.isEmpty {
                     Label(status, systemImage: activity?.symbol ?? "heart.fill")
                         .font(.system(size: 13, weight: .semibold, design: .rounded))
                         .opacity(0.65)
@@ -152,6 +164,10 @@ struct WidgetContent: View {
         }
         .padding(14)
     }
+}
+
+extension String {
+    var capitalizedFirst: String { prefix(1).uppercased() + dropFirst() }
 }
 
 struct WidgetPreview: View {
