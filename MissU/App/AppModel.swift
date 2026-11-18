@@ -20,6 +20,7 @@ final class AppModel {
     var email = ""
     var pendingUsername: String?
     var toast: String?
+    var reaction: Interaction?
     var headphonesConnected = false
 
     var setupDone = UserDefaults.standard.bool(forKey: "setupDone") {
@@ -37,6 +38,7 @@ final class AppModel {
     @ObservationIgnored private var listeners: [Task<Void, Never>] = []
     @ObservationIgnored private var pendingRefresh: Task<Void, Never>?
     @ObservationIgnored private var justSignedIn = false
+    @ObservationIgnored private var shownReaction: Interaction?
     @ObservationIgnored private let headphones = HeadphoneMonitor()
 
     func start() async {
@@ -99,6 +101,10 @@ final class AppModel {
         let firstLoad = phase != .ready
         state = new
         phase = .ready
+        if let love = new.interaction, !love.seen, love != shownReaction, new.partner != nil {
+            shownReaction = love
+            reaction = love
+        }
         syncWidget()
         if firstLoad {
             Task {
@@ -155,10 +161,12 @@ final class AppModel {
         if await call("save_avatar", ["p_config": json(config)]) { await refresh() }
     }
 
-    func setNotifications(requests: Bool, widget: Bool) async {
+    func setNotifications(requests: Bool, widget: Bool, interactions: Bool) async {
         state?.settings.notifyRequests = requests
         state?.settings.notifyWidget = widget
-        if await call("set_notifications", ["p_requests": .bool(requests), "p_widget": .bool(widget)]) { await refresh() }
+        state?.settings.notifyInteractions = interactions
+        let params: [String: AnyJSON] = ["p_requests": .bool(requests), "p_widget": .bool(widget), "p_interactions": .bool(interactions)]
+        if await call("set_notifications", params) { await refresh() }
     }
 
     func signOut() async {
@@ -213,6 +221,15 @@ final class AppModel {
 
     func disconnect() async {
         if await call("disconnect_partner") { await refresh() }
+    }
+
+    func sendInteraction(_ kind: InteractionKind) async {
+        await call("send_interaction", ["p_kind": .string(kind.rawValue)])
+    }
+
+    func dismissReaction() async {
+        reaction = nil
+        await call("mark_interactions_seen")
     }
 
     // MARK: Activity
@@ -277,7 +294,7 @@ final class AppModel {
     private func connectRealtime() async {
         guard channel == nil else { return }
         let channel = supabase.channel("state")
-        let streams = ["profiles", "avatars", "activities", "widget_configs", "connection_requests"].map {
+        let streams = ["profiles", "avatars", "activities", "widget_configs", "connection_requests", "interactions"].map {
             channel.postgresChange(AnyAction.self, schema: "public", table: $0)
         }
         self.channel = channel
@@ -346,7 +363,9 @@ final class AppModel {
         "request_not_found": "That request isn't there anymore.",
         "no_partner": "You're not connected to anyone yet.",
         "partner_changes_off": "Your partner turned off widget changes.",
-        "unknown_activity": "That activity isn't available yet."
+        "unknown_activity": "That activity isn't available yet.",
+        "too_fast": "One at a time!",
+        "unknown_interaction": "That one isn't available yet."
     ]
 
     #if DEBUG

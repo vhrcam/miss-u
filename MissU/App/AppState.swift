@@ -4,6 +4,7 @@ struct AppState: Decodable, Equatable {
     var me: Person
     var settings: Settings
     var partner: Person?
+    var interaction: Interaction?
     var myWidget: MyWidget
     var partnerWidget: PartnerWidget?
     var incoming: [ConnectionRequest]
@@ -12,6 +13,7 @@ struct AppState: Decodable, Equatable {
     struct Settings: Decodable, Equatable {
         var notifyRequests: Bool
         var notifyWidget: Bool
+        var notifyInteractions: Bool
         var partnerSince: Date?
     }
 
@@ -38,7 +40,7 @@ struct AppState: Decodable, Equatable {
     }
 
     enum CodingKeys: String, CodingKey {
-        case me, partner, myWidget, partnerWidget, incoming, outgoing
+        case me, partner, interaction, myWidget, partnerWidget, incoming, outgoing
     }
 
     init(from decoder: Decoder) throws {
@@ -46,6 +48,7 @@ struct AppState: Decodable, Equatable {
         me = try c.decode(Person.self, forKey: .me)
         settings = try c.decode(Settings.self, forKey: .me)
         partner = try c.decodeIfPresent(Person.self, forKey: .partner)
+        interaction = try? c.decodeIfPresent(Interaction.self, forKey: .interaction)
         myWidget = try c.decode(MyWidget.self, forKey: .myWidget)
         partnerWidget = try c.decodeIfPresent(PartnerWidget.self, forKey: .partnerWidget)
         incoming = try c.decode([ConnectionRequest].self, forKey: .incoming)
@@ -53,7 +56,7 @@ struct AppState: Decodable, Equatable {
     }
 
     var snapshot: WidgetSnapshot {
-        WidgetSnapshot(me: me, partner: partner, style: myWidget.style, byPartner: myWidget.byPartner)
+        WidgetSnapshot(me: me, partner: partner, interaction: interaction, style: myWidget.style, byPartner: myWidget.byPartner)
     }
 
     func partnerSnapshot(style: WidgetStyle? = nil) -> WidgetSnapshot? {

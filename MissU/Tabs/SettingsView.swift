@@ -48,13 +48,18 @@ struct SettingsView: View {
                     }
 
                     Section("Notifications") {
+                        let s = state.settings
                         Toggle("Connection requests", isOn: Binding(
-                            get: { state.settings.notifyRequests },
-                            set: { on in Task { await model.setNotifications(requests: on, widget: state.settings.notifyWidget) } }
+                            get: { s.notifyRequests },
+                            set: { on in Task { await model.setNotifications(requests: on, widget: s.notifyWidget, interactions: s.notifyInteractions) } }
                         ))
                         Toggle("Widget changes", isOn: Binding(
-                            get: { state.settings.notifyWidget },
-                            set: { on in Task { await model.setNotifications(requests: state.settings.notifyRequests, widget: on) } }
+                            get: { s.notifyWidget },
+                            set: { on in Task { await model.setNotifications(requests: s.notifyRequests, widget: on, interactions: s.notifyInteractions) } }
+                        ))
+                        Toggle("Kisses, hugs and pokes", isOn: Binding(
+                            get: { s.notifyInteractions },
+                            set: { on in Task { await model.setNotifications(requests: s.notifyRequests, widget: s.notifyWidget, interactions: on) } }
                         ))
                     }
 
