@@ -24,6 +24,18 @@ extension Person {
 struct WidgetSnapshot: Codable, Hashable {
     var me: Person
     var partner: Person?
+    var interaction: Interaction?
     var style: WidgetStyle
     var byPartner: Bool
+}
+
+extension WidgetSnapshot {
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        me = try c.decode(Person.self, forKey: .me)
+        partner = try c.decodeIfPresent(Person.self, forKey: .partner)
+        interaction = try? c.decodeIfPresent(Interaction.self, forKey: .interaction)
+        style = (try? c.decode(WidgetStyle.self, forKey: .style)) ?? WidgetStyle()
+        byPartner = (try? c.decode(Bool.self, forKey: .byPartner)) ?? false
+    }
 }
