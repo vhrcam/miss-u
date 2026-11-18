@@ -32,6 +32,7 @@ extension AvatarView {
         var base: [Layer] = []
         var face: [Layer] = []
         var blink: [Layer] = []
+        var top: [Layer] = []
         var activity: ActivityKind?
 
         init(config: AvatarConfig, activity: ActivityKind?) {
@@ -43,6 +44,10 @@ extension AvatarView {
             base += body(config.color)
             base += outfit(config.outfit, config.shirt)
             base += hairFront(config.hair, config.color.deep)
+            base += accessory(config.accessory, config.shirt)
+            if config.accessory == .glasses {
+                top += glasses
+            }
             face = AvatarView.face(.happy, config.presentation)
             blink = AvatarView.face(.happy, config.presentation, blink: true)
         }
@@ -55,6 +60,7 @@ extension AvatarView {
                     ZStack {
                         Stack(layers: base)
                         Stack(layers: blinking(at: t) ? blink : face)
+                        Stack(layers: top)
                     }
                     .visualEffect { content, proxy in
                         content
@@ -68,6 +74,7 @@ extension AvatarView {
                 ZStack {
                     Stack(layers: base)
                     Stack(layers: face)
+                    Stack(layers: top)
                     Stack(layers: effects(at: nil))
                 }
             }
