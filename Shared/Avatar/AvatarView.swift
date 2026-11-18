@@ -117,7 +117,7 @@ extension AvatarView {
         }
 
         func effects(at t: Double?) -> [Layer] {
-            []
+            AvatarView.effects(activity, t)
         }
     }
 }
