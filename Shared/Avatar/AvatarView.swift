@@ -37,19 +37,46 @@ extension AvatarView {
 
         init(config: AvatarConfig, activity: ActivityKind?) {
             self.activity = activity
-            let hatted = config.accessory == .beanie || config.accessory == .cap
-            base += hairBack(config.hair, config.color.deep, hatted: hatted)
+            let pose = AvatarView.pose(activity)
+            let mood = expression(activity)
+            let sporty = activity == .exercising
+            let hat = config.accessory == .beanie || config.accessory == .cap
+            let clothes: Outfit? = sporty ? nil : config.outfit
+            let arms = AvatarView.arms(pose, activity, config.color.fill, clothes, config.shirt.fill)
+
+            base += hairBack(config.hair, config.color.deep, hatted: hat && !sporty)
+            base += behind(activity)
             base += feet(config.color)
-            base += sideArms(config.color.fill, config.outfit, config.shirt.fill)
+            if pose != .hold {
+                base += arms
+            }
             base += body(config.color)
-            base += outfit(config.outfit, config.shirt)
+            base += sporty ? tank(config.shirt) : outfit(config.outfit, config.shirt)
             base += hairFront(config.hair, config.color.deep)
-            base += accessory(config.accessory, config.shirt)
+            if !(sporty && hat) {
+                base += accessory(config.accessory, config.shirt)
+            }
+            if sporty {
+                base += sweatband(config.shirt)
+            }
+            if pose == .hold {
+                base += activity == .working ? arms + prop(activity) : prop(activity) + arms
+            }
             if config.accessory == .glasses {
                 top += glasses
             }
-            face = AvatarView.face(.happy, config.presentation)
-            blink = AvatarView.face(.happy, config.presentation, blink: true)
+            if activity == .music {
+                top += headphones
+            }
+            face = AvatarView.face(mood, config.presentation)
+            blink = AvatarView.face(mood, config.presentation, blink: true)
+
+            if pose == .lie {
+                base = pillow + base.map { $0.applying(lying) } + blanket(config.shirt)
+                face = face.map { $0.applying(lying) }
+                blink = blink.map { $0.applying(lying) }
+                top = top.map { $0.applying(lying) }
+            }
         }
 
         @ViewBuilder
