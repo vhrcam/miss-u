@@ -1,9 +1,7 @@
 import SwiftUI
 
 extension AvatarView {
-    static var crown: Path {
-        bodyPath.applying(grow(1.06, 1.06, 50, 60))
-    }
+    static let crown = bodyPath.applying(grow(1.06, 1.06, 50, 60))
 
     static func hairBack(_ style: HairStyle, _ color: Color, hatted: Bool) -> [Layer] {
         var pen = Pen()
