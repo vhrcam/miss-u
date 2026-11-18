@@ -66,6 +66,7 @@ struct OfflineView: View {
 }
 
 struct MainTabs: View {
+    @Environment(AppModel.self) private var model
     @State private var tab = 0
 
     var body: some View {
@@ -80,6 +81,13 @@ struct MainTabs: View {
             FloatingTabBar(selection: $tab).padding(.bottom, 2)
         }
         .ignoresSafeArea(.keyboard)
+        .overlay {
+            if let reaction = model.reaction, let partner = model.state?.partner {
+                ReactionOverlay(partner: partner, interaction: reaction)
+                    .transition(.opacity)
+            }
+        }
+        .animation(.easeInOut(duration: 0.25), value: model.reaction)
         #if DEBUG
         .onAppear {
             let args = CommandLine.arguments
