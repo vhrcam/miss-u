@@ -39,6 +39,8 @@ extension AvatarView {
             base += feet(config.color)
             base += sideArms(config.color.fill)
             base += body(config.color)
+            face = AvatarView.face(.happy, config.presentation)
+            blink = AvatarView.face(.happy, config.presentation, blink: true)
         }
 
         @ViewBuilder
