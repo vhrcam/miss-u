@@ -66,7 +66,7 @@ extension CritterInk {
         outline(body)
         for foot in rig.body.feet { shape(foot, fur.base) }
         at(rig.head, tilt: rig.tilt).head(species, fur: fur, mood: mood)
-        for prop in rig.props { self.prop(prop) }
         for limb in rig.front { tube(limb.path, width: limb.width, fur.base) }
+        for prop in rig.props { self.prop(prop) }
     }
 }
