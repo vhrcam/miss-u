@@ -20,6 +20,12 @@ extension CritterRig.Body {
             p.addLine(to: CGPoint(x: 62, y: 92.5))
             p.addCurve(to: CGPoint(x: 71, y: 85), control1: CGPoint(x: 67, y: 92.5), control2: CGPoint(x: 70.5, y: 90.5))
             p.addCurve(to: CGPoint(x: 65.5, y: 61), control1: CGPoint(x: 71.5, y: 77), control2: CGPoint(x: 68, y: 68))
+        case .lying:
+            p.move(to: CGPoint(x: 42, y: 92.5))
+            p.addLine(to: CGPoint(x: 80, y: 92.5))
+            p.addCurve(to: CGPoint(x: 90, y: 80), control1: CGPoint(x: 86.5, y: 92.5), control2: CGPoint(x: 90.5, y: 87))
+            p.addCurve(to: CGPoint(x: 66, y: 62), control1: CGPoint(x: 89.5, y: 70), control2: CGPoint(x: 79, y: 62))
+            p.addCurve(to: CGPoint(x: 42, y: 70), control1: CGPoint(x: 55, y: 62), control2: CGPoint(x: 46, y: 65))
         }
         p.closeSubpath()
         return p
@@ -33,6 +39,7 @@ extension CritterRig.Body {
                 Path(ellipseIn: CGRect(x: -5.6, y: -6.3, width: 11.2, height: 12.6))
                     .applying(CGAffineTransform(rotationAngle: a).concatenating(.init(translationX: x, y: 86.3)))
             }
+        case .lying: [Path(ellipseIn: CGRect(x: 80, y: 84, width: 10, height: 8))]
         }
     }
 }
@@ -59,6 +66,7 @@ extension CritterInk {
         outline(body)
         for foot in rig.body.feet { shape(foot, fur.base) }
         at(rig.head, tilt: rig.tilt).head(species, fur: fur, mood: mood)
+        for prop in rig.props { self.prop(prop) }
         for limb in rig.front { tube(limb.path, width: limb.width, fur.base) }
     }
 }
