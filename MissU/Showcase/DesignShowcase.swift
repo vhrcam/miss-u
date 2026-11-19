@@ -32,6 +32,7 @@ struct ShowcaseBody: View {
             ShowcaseSection(title: "Icons", note: "Drawn with the same brown ink as the characters.") { IconBoard() }
             ShowcaseSection(title: "Characters in the UI", note: "Empty and loading screens, activity picks and the tab bar all use the characters.") { InAppBoard() }
             ShowcaseSection(title: "Widgets", note: "Your partner's character, what they're up to, and their colors.") { WidgetBoard() }
+            ShowcaseSection(title: "Notifications", note: "iOS draws the banner, but the picture and the thumbnail can be your partner's character and our artwork.") { NotificationBoard() }
         }
         .sheet(isPresented: $concept) { HomeConcept { concept = false } }
     }
@@ -237,5 +238,37 @@ private struct WidgetBoard: View {
         .background(Backdrop(tint: tint))
         .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
         .overlay { RoundedRectangle(cornerRadius: 30, style: .continuous).stroke(Palette.ink.opacity(0.12), lineWidth: 1) }
+    }
+}
+
+private struct NotificationBoard: View {
+    var body: some View {
+        VStack(spacing: Space.m) {
+            banner(.cat, tint: .pink, name: "blake", text: "sent you a kiss", icon: .kiss)
+            banner(.cat, tint: .pink, name: "blake", text: "restyled your widget", icon: .palette)
+        }
+    }
+
+    private func banner(_ species: Species, tint: Tint, name: String, text: String, icon: Icon) -> some View {
+        HStack(spacing: Space.m) {
+            CritterHead(species)
+                .frame(width: 34, height: 34)
+                .padding(5)
+                .background(tint.soft, in: Circle())
+                .overlay { Circle().stroke(Palette.ink, lineWidth: 1.5) }
+            VStack(alignment: .leading, spacing: 1) {
+                HStack {
+                    Text(name).font(.system(size: 15, weight: .semibold))
+                    Spacer()
+                    Text("now").font(.system(size: 13)).foregroundStyle(.secondary)
+                }
+                Text(text).font(.system(size: 15))
+            }
+            IconView(icon: icon, size: 30)
+        }
+        .padding(Space.m)
+        .foregroundStyle(.black)
+        .background(.white.opacity(0.94), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .shadow(color: Palette.ink.opacity(0.1), radius: 12, y: 4)
     }
 }
