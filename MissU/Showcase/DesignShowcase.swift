@@ -15,17 +15,23 @@ struct DesignShowcase: View {
 
 struct ShowcaseBody: View {
     var close: (() -> Void)?
+    @State private var concept = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: Space.xxl) {
             header
+            ShowcaseSection(title: "Home concept", note: "The two of you are the main thing on screen. Everything else supports them.") {
+                Button("Open the home concept") { concept = true }.buttonStyle(.candy(.peach))
+            }
             ShowcaseSection(title: "Colors", note: "Every hue comes as soft, fill and deep. Screens pick one as their personality.") { PaletteBoard() }
             ShowcaseSection(title: "Type", note: "Fredoka, round and chunky like the characters.") { TypeBoard() }
             ShowcaseSection(title: "Buttons", note: "Candy for the main action, soft for the second, a squiggle for small links.") { ButtonBoard() }
             ShowcaseSection(title: "Send love", note: "Each one pops and throws little hearts.") { LoveBoard() }
             ShowcaseSection(title: "Cards", note: "Warm white stickers with a colored edge, or soft tinted panels.") { CardBoard() }
             ShowcaseSection(title: "Icons", note: "Drawn with the same brown ink as the characters.") { IconBoard() }
+            ShowcaseSection(title: "Characters in the UI", note: "Empty and loading screens, activity picks and the tab bar all use the characters.") { InAppBoard() }
         }
+        .sheet(isPresented: $concept) { HomeConcept { concept = false } }
     }
 
     private var header: some View {
@@ -174,5 +180,30 @@ private struct IconBoard: View {
             }
         }
         .stickerCard()
+    }
+}
+
+private struct InAppBoard: View {
+    @State private var tab = 2
+    @State private var doing = 0
+
+    var body: some View {
+        VStack(spacing: Space.l) {
+            EmptyState(species: .rabbit, pose: .sleeping, title: "No activity yet", message: "When blake shares what they're up to, it shows up here.")
+                .stickerCard()
+            HStack {
+                CritterLoader(species: .dog)
+                Spacer()
+                ThoughtBubble(icon: .cup, text: "coffee break", tint: .peach, tailLeading: false)
+            }
+            .stickerCard()
+            HStack(spacing: Space.s) {
+                ActivityChip(icon: .music, label: "Music", tint: .lavender, selected: doing == 0) { doing = 0 }
+                ActivityChip(icon: .tv, label: "TV", tint: .butter, selected: doing == 1) { doing = 1 }
+                ActivityChip(icon: .sneaker, label: "Gym", tint: .mint, selected: doing == 2) { doing = 2 }
+            }
+            StickerTabBar(selection: $tab, items: [("Home", .home), ("Style", .palette), ("Activities", .star), ("Settings", .gear)], tint: .butter)
+                .padding(.top, Space.xl)
+        }
     }
 }
