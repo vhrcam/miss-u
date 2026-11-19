@@ -50,7 +50,7 @@ struct HomeConcept: View {
             }
             Spacer(minLength: 0)
             StickerTabBar(selection: $tab, items: [("Home", .home), ("Style", .palette), ("Activities", .star), ("Settings", .gear)]) {
-                CritterView(.bear).scaleEffect(1.7, anchor: .top).offset(y: 4)
+                CritterHead(.bear)
             }
         }
         .padding(.horizontal, Space.xl)

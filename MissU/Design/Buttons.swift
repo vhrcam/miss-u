@@ -35,7 +35,7 @@ struct CandyButtonStyle<Peek: View>: ButtonStyle {
             .offset(y: sink)
             .background(alignment: .topTrailing) {
                 peek
-                    .offset(x: -height * 0.5, y: -height * 0.42 + sink * 1.6)
+                    .offset(x: -height * 0.5, y: -height * 0.54 + sink * 1.6)
                     .scaleEffect(x: pressed ? 1.08 : 1, y: pressed ? 0.86 : 1, anchor: .bottom)
             }
             .background {

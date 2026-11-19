@@ -31,7 +31,7 @@ struct StickerTabBar<Peek: View>: View {
                             SpringKeyframe(1, duration: 0.2)
                         }
                     }
-                    .offset(x: 6 + slot * (CGFloat(selection) + 0.5) - 22, y: -26)
+                    .offset(x: 6 + slot * (CGFloat(selection) + 0.5) - 22, y: -29)
                     .animation(Motion.hop, value: selection)
                 bar
                     .padding(.top, 2)
