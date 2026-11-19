@@ -1,0 +1,178 @@
+import SwiftUI
+
+struct DesignShowcase: View {
+    var close: (() -> Void)?
+
+    var body: some View {
+        ScrollView {
+            ShowcaseBody(close: close)
+                .padding(.horizontal, Space.xl)
+                .padding(.vertical, Space.xl)
+        }
+        .backdrop(.pink)
+    }
+}
+
+struct ShowcaseBody: View {
+    var close: (() -> Void)?
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: Space.xxl) {
+            header
+            ShowcaseSection(title: "Colors", note: "Every hue comes as soft, fill and deep. Screens pick one as their personality.") { PaletteBoard() }
+            ShowcaseSection(title: "Type", note: "Fredoka, round and chunky like the characters.") { TypeBoard() }
+            ShowcaseSection(title: "Buttons", note: "Candy for the main action, soft for the second, a squiggle for small links.") { ButtonBoard() }
+            ShowcaseSection(title: "Send love", note: "Each one pops and throws little hearts.") { LoveBoard() }
+            ShowcaseSection(title: "Cards", note: "Warm white stickers with a colored edge, or soft tinted panels.") { CardBoard() }
+            ShowcaseSection(title: "Icons", note: "Drawn with the same brown ink as the characters.") { IconBoard() }
+        }
+    }
+
+    private var header: some View {
+        HStack(alignment: .top) {
+            VStack(alignment: .leading, spacing: Space.xs) {
+                HStack(alignment: .firstTextBaseline, spacing: Space.s) {
+                    Text("miss u").font(Typeface.display)
+                    IconView(icon: .heart, size: 26)
+                }
+                Text("Design preview").font(Typeface.body).foregroundStyle(Palette.cocoa)
+            }
+            Spacer()
+            if let close {
+                Button(action: close) { Text("Done").font(Typeface.caption) }.buttonStyle(.round(size: 52))
+            }
+        }
+    }
+}
+
+struct ShowcaseSection<Content: View>: View {
+    var title: String
+    var note: String
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: Space.m) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title).font(Typeface.title)
+                Text(note).font(Typeface.caption).foregroundStyle(Palette.cocoa).fixedSize(horizontal: false, vertical: true)
+            }
+            content
+        }
+    }
+}
+
+private struct PaletteBoard: View {
+    private let names = ["pink", "peach", "butter", "mint", "sky", "lavender", "oat"]
+
+    var body: some View {
+        VStack(spacing: Space.m) {
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 96), spacing: Space.m)], spacing: Space.m) {
+                ForEach(Tint.all.indices, id: \.self) { i in
+                    let tint = Tint.all[i]
+                    VStack(spacing: 0) {
+                        tint.soft.frame(height: 22)
+                        tint.fill.frame(height: 26)
+                        tint.deep.frame(height: 18)
+                    }
+                    .clipShape(Blob(corner: 16, seed: i))
+                    .overlay { Blob(corner: 16, seed: i).stroke(Palette.ink, lineWidth: Line.card) }
+                    .overlay(alignment: .bottomLeading) {
+                        Text(names[i]).font(Typeface.tiny).foregroundStyle(Palette.ink).padding(.leading, 10).padding(.bottom, 2)
+                    }
+                }
+            }
+            HStack(spacing: Space.m) {
+                ForEach([("ink", Palette.ink), ("cocoa", Palette.cocoa), ("cream", Palette.cream), ("white", Palette.warmWhite), ("cheek", Palette.cheek)], id: \.0) { name, color in
+                    VStack(spacing: Space.xs) {
+                        Circle().fill(color).frame(width: 38).overlay { Circle().stroke(Palette.ink, lineWidth: Line.card) }
+                        Text(name).font(Typeface.tiny)
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+            }
+        }
+    }
+}
+
+private struct TypeBoard: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: Space.s) {
+            Text("Hi, blake").font(Typeface.display)
+            Text("Send some love").font(Typeface.title)
+            Text("They're listening to music").font(Typeface.headline)
+            Text("Your partner can restyle your widget whenever they miss you.").font(Typeface.body)
+            Text("Changed 3 min ago").font(Typeface.caption).foregroundStyle(Palette.cocoa)
+            Text("RIGHT NOW").font(Typeface.tiny).tracking(1.2).foregroundStyle(Palette.cocoa)
+        }
+        .stickerCard()
+    }
+}
+
+private struct ButtonBoard: View {
+    var body: some View {
+        VStack(spacing: Space.l) {
+            Button("Restyle their widget") {}.buttonStyle(.candy(.pink))
+            HStack(spacing: Space.m) {
+                Button("Not now") {}.buttonStyle(.softPill())
+                Button("Next") {}.buttonStyle(.candy(.butter))
+            }
+            HStack(spacing: Space.l) {
+                Button {} label: { IconView(icon: .gear, size: 24) }.buttonStyle(.round())
+                Button {} label: { IconView(icon: .palette, size: 24) }.buttonStyle(.round(.mint))
+                Button {} label: { IconView(icon: .music, size: 24) }.buttonStyle(.round(.lavender))
+                Spacer()
+                Button("See all") {}.buttonStyle(.squiggle(.pink))
+            }
+            Button("Waiting for blake") {}.buttonStyle(.candy(.sky)).disabled(true)
+        }
+    }
+}
+
+private struct LoveBoard: View {
+    var body: some View {
+        HStack {
+            LoveButton(icon: .kiss, label: "Kiss", tint: .pink)
+            Spacer()
+            LoveButton(icon: .hug, label: "Hug", tint: .peach)
+            Spacer()
+            LoveButton(icon: .poke, label: "Poke", tint: .butter)
+            Spacer()
+            LoveButton(icon: .heart, label: "Heart", tint: .lavender)
+        }
+        .padding(.vertical, Space.s)
+    }
+}
+
+private struct CardBoard: View {
+    var body: some View {
+        VStack(spacing: Space.l) {
+            HStack(spacing: Space.m) {
+                IconView(icon: .headphones, size: 40)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("blake is listening").font(Typeface.headline)
+                    Text("Changed 3 min ago").font(Typeface.caption).foregroundStyle(Palette.cocoa)
+                }
+            }
+            .stickerCard(lip: Tint.pink.deep)
+            HStack(spacing: Space.m) {
+                IconView(icon: .bag, size: 36)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Shopping").font(Typeface.headline)
+                    Text("Shows on blake's widget for 2 hours").font(Typeface.caption).foregroundStyle(Palette.cocoa)
+                }
+            }
+            .softCard(.peach)
+        }
+    }
+}
+
+private struct IconBoard: View {
+    var body: some View {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 6), spacing: Space.l) {
+            ForEach(Icon.allCases, id: \.self) { icon in
+                IconView(icon: icon, size: 36)
+            }
+        }
+        .stickerCard()
+    }
+}
