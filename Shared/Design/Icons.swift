@@ -2,6 +2,7 @@ import SwiftUI
 
 enum Icon: String, CaseIterable {
     case heart, kiss, hug, poke, headphones, bag, home, palette, star, gear, music, moon
+    case controller, book, laptop, cup, tv, sneaker
 }
 
 struct IconView: View {
@@ -230,6 +231,110 @@ extension Icon {
             moon.addCurve(to: pt(0.62, 0.1), control1: pt(0.78, 0.98), control2: pt(0.02, 0.92))
             moon.closeSubpath()
             return [IconPart(path: moon, fill: Color(hex: 0xFFE08A)), shine(0.3, 0.5, 0.04)]
+        case .controller:
+            var pad = Path()
+            pad.move(to: pt(0.3, 0.28))
+            pad.addLine(to: pt(0.7, 0.28))
+            pad.addCurve(to: pt(0.94, 0.62), control1: pt(0.86, 0.28), control2: pt(0.94, 0.44))
+            pad.addCurve(to: pt(0.72, 0.74), control1: pt(0.94, 0.8), control2: pt(0.8, 0.84))
+            pad.addCurve(to: pt(0.5, 0.64), control1: pt(0.64, 0.66), control2: pt(0.58, 0.64))
+            pad.addCurve(to: pt(0.28, 0.74), control1: pt(0.42, 0.64), control2: pt(0.36, 0.66))
+            pad.addCurve(to: pt(0.06, 0.62), control1: pt(0.2, 0.84), control2: pt(0.06, 0.8))
+            pad.addCurve(to: pt(0.3, 0.28), control1: pt(0.06, 0.44), control2: pt(0.14, 0.28))
+            pad.closeSubpath()
+            return [
+                IconPart(path: pad, fill: Color(hex: 0xCDBBF6)),
+                IconPart(path: line(pt(0.19, 0.46), pt(0.35, 0.46)), fill: nil, weight: 0.8),
+                IconPart(path: line(pt(0.27, 0.38), pt(0.27, 0.54)), fill: nil, weight: 0.8),
+                IconPart(path: oval(0.68, 0.41, 0.05, 0.05), fill: Color(hex: 0xFF8FAB), weight: 0.6),
+                IconPart(path: oval(0.78, 0.51, 0.05, 0.05), fill: Color(hex: 0xFFE08A), weight: 0.6),
+            ]
+
+        case .book:
+            var left = Path()
+            left.move(to: pt(0.5, 0.3))
+            left.addCurve(to: pt(0.08, 0.24), control1: pt(0.36, 0.2), control2: pt(0.2, 0.2))
+            left.addLine(to: pt(0.08, 0.78))
+            left.addCurve(to: pt(0.5, 0.84), control1: pt(0.22, 0.74), control2: pt(0.38, 0.76))
+            left.closeSubpath()
+            var right = Path()
+            right.move(to: pt(0.5, 0.3))
+            right.addCurve(to: pt(0.92, 0.24), control1: pt(0.64, 0.2), control2: pt(0.8, 0.2))
+            right.addLine(to: pt(0.92, 0.78))
+            right.addCurve(to: pt(0.5, 0.84), control1: pt(0.78, 0.74), control2: pt(0.62, 0.76))
+            right.closeSubpath()
+            var ribbon = Path()
+            ribbon.move(to: pt(0.68, 0.22))
+            ribbon.addLine(to: pt(0.68, 0.46))
+            ribbon.addLine(to: pt(0.73, 0.41))
+            ribbon.addLine(to: pt(0.78, 0.46))
+            ribbon.addLine(to: pt(0.78, 0.22))
+            let page = Color(hex: 0xE1EFFD)
+            return [
+                IconPart(path: left, fill: page),
+                IconPart(path: right, fill: page),
+                IconPart(path: ribbon, fill: Color(hex: 0xFF8FAB), weight: 0.7),
+                IconPart(path: line(pt(0.18, 0.44), pt(0.38, 0.46)), fill: nil, weight: 0.6),
+                IconPart(path: line(pt(0.18, 0.58), pt(0.38, 0.6)), fill: nil, weight: 0.6),
+                IconPart(path: line(pt(0.62, 0.58), pt(0.82, 0.56)), fill: nil, weight: 0.6),
+            ]
+
+        case .laptop:
+            var base = Path()
+            base.move(to: pt(0.06, 0.68))
+            base.addLine(to: pt(0.94, 0.68))
+            base.addQuadCurve(to: pt(0.86, 0.8), control: pt(0.94, 0.8))
+            base.addLine(to: pt(0.14, 0.8))
+            base.addQuadCurve(to: pt(0.06, 0.68), control: pt(0.06, 0.8))
+            base.closeSubpath()
+            return [
+                IconPart(path: Path(roundedRect: CGRect(x: 0.16, y: 0.2, width: 0.68, height: 0.48), cornerRadius: 0.07), fill: Color(hex: 0xAED3F7)),
+                IconPart(path: base, fill: Color(hex: 0xE6D4C5)),
+                IconPart(path: .heart(0.5, 0.45, 0.24), fill: Color(hex: 0xFF8FAB), weight: 0.7),
+                shine(0.27, 0.3, 0.035),
+            ]
+
+        case .cup:
+            var steam = Path()
+            for x in [0.34, 0.52] as [CGFloat] {
+                steam.move(to: pt(x, 0.28))
+                steam.addQuadCurve(to: pt(x, 0.17), control: pt(x - 0.07, 0.23))
+                steam.addQuadCurve(to: pt(x, 0.06), control: pt(x + 0.07, 0.11))
+            }
+            let mug = Color(hex: 0xFFC4A3)
+            return [
+                IconPart(path: oval(0.74, 0.58, 0.13, 0.13).strokedPath(StrokeStyle(lineWidth: 0.08)), fill: mug),
+                IconPart(path: Path(roundedRect: CGRect(x: 0.14, y: 0.36, width: 0.56, height: 0.52), cornerRadius: 0.13), fill: mug),
+                IconPart(path: .heart(0.42, 0.61, 0.24), fill: Color(hex: 0xFF8FAB), weight: 0.7),
+                IconPart(path: steam, fill: nil, weight: 0.7),
+            ]
+
+        case .tv:
+            return [
+                IconPart(path: line(pt(0.34, 0.08), pt(0.5, 0.24), pt(0.66, 0.08)), fill: nil, weight: 0.8),
+                IconPart(path: line(pt(0.26, 0.82), pt(0.21, 0.92)), fill: nil, weight: 0.8),
+                IconPart(path: line(pt(0.74, 0.82), pt(0.79, 0.92)), fill: nil, weight: 0.8),
+                IconPart(path: Path(roundedRect: CGRect(x: 0.08, y: 0.24, width: 0.84, height: 0.58), cornerRadius: 0.15), fill: Color(hex: 0xFFE08A)),
+                IconPart(path: Path(roundedRect: CGRect(x: 0.17, y: 0.33, width: 0.5, height: 0.4), cornerRadius: 0.09), fill: Color(hex: 0xE1EFFD), weight: 0.8),
+                IconPart(path: oval(0.8, 0.43, 0.045, 0.045), fill: Color(hex: 0xFF8FAB), weight: 0.6),
+                IconPart(path: oval(0.8, 0.6, 0.045, 0.045), fill: Color(hex: 0xFF8FAB), weight: 0.6),
+            ]
+
+        case .sneaker:
+            var upper = Path()
+            upper.move(to: pt(0.12, 0.7))
+            upper.addLine(to: pt(0.13, 0.36))
+            upper.addQuadCurve(to: pt(0.32, 0.34), control: pt(0.21, 0.27))
+            upper.addQuadCurve(to: pt(0.52, 0.5), control: pt(0.38, 0.5))
+            upper.addQuadCurve(to: pt(0.88, 0.6), control: pt(0.82, 0.48))
+            upper.addQuadCurve(to: pt(0.92, 0.7), control: pt(0.94, 0.63))
+            upper.closeSubpath()
+            return [
+                IconPart(path: upper, fill: Color(hex: 0xFFB3C6)),
+                IconPart(path: Path(roundedRect: CGRect(x: 0.07, y: 0.66, width: 0.88, height: 0.15), cornerRadius: 0.075), fill: Palette.warmWhite),
+                IconPart(path: line(pt(0.3, 0.45), pt(0.38, 0.4)), fill: nil, weight: 0.7),
+                IconPart(path: line(pt(0.37, 0.52), pt(0.45, 0.47)), fill: nil, weight: 0.7),
+            ]
         }
     }
 }
