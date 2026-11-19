@@ -1,8 +1,13 @@
 import Foundation
 
 enum Server {
+    #if targetEnvironment(simulator)
     static let url = URL(string: "http://127.0.0.1:54321")!
     static let key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0"
+    #else
+    static let url = URL(string: "https://dhgbwetsdidunexucrmq.supabase.co")!
+    static let key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRoZ2J3ZXRzZGlkdW5leHVjcm1xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUwNDIyMDcsImV4cCI6MjExMDYxODIwN30.u8Y3a3CRhXHXGiCBhebGiSCZL_8Dx9olXjkwvr96OnE"
+    #endif
 }
 
 enum MissUJSON {
