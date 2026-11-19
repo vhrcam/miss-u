@@ -119,6 +119,9 @@ private struct ButtonBoard: View {
     var body: some View {
         VStack(spacing: Space.l) {
             Button("Restyle their widget") {}.buttonStyle(.candy(.pink))
+            Button("Send blake a kiss") {}
+                .buttonStyle(CandyButtonStyle(tint: .peach, peek: CritterHead(.cat).frame(width: 44, height: 44)))
+                .padding(.top, Space.l)
             HStack(spacing: Space.m) {
                 Button("Not now") {}.buttonStyle(.softPill())
                 Button("Next") {}.buttonStyle(.candy(.butter))
