@@ -14,13 +14,8 @@ struct CritterView: View {
     }
 
     var body: some View {
-        Canvas { context, size in
-            let s = min(size.width, size.height) / 108
-            var c = context
-            c.translateBy(x: (size.width - 108 * s) / 2 + 4 * s, y: (size.height - 108 * s) / 2 + 7 * s)
-            c.scaleBy(x: s, y: s)
-            CritterInk(c, scale: s).critter(species, fur: fur ?? species.fur, rig: pose.rig, mood: mood ?? pose.mood)
+        CritterCanvas(frame: CGRect(x: 5, y: 8, width: 90, height: 90), headroom: 16) {
+            $0.critter(species, fur: fur ?? species.fur, rig: pose.rig, mood: mood ?? pose.mood)
         }
-        .aspectRatio(1, contentMode: .fit)
     }
 }
