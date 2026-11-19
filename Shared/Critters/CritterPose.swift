@@ -1,11 +1,11 @@
 import SwiftUI
 
 enum CritterPose: CaseIterable {
-    case idle
+    case idle, sitting
 
     var mood: CritterMood {
         switch self {
-        case .idle: .happy
+        case .idle, .sitting: .happy
         }
     }
 
@@ -15,12 +15,16 @@ enum CritterPose: CaseIterable {
             CritterRig(body: .standing, head: CGPoint(x: 50, y: 43),
                        back: [.init(36, 63, 30, 76), .init(64, 63, 70, 76)],
                        shadow: CGRect(x: 29, y: 90, width: 42, height: 6))
+        case .sitting:
+            CritterRig(body: .sitting, head: CGPoint(x: 50, y: 50),
+                       back: [.init(35.5, 68, 27.5, 80.5), .init(64.5, 68, 72.5, 80.5)],
+                       shadow: CGRect(x: 26, y: 90, width: 48, height: 6))
         }
     }
 }
 
 struct CritterRig {
-    enum Body { case standing }
+    enum Body { case standing, sitting }
 
     struct Limb {
         var from: CGPoint

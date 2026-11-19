@@ -13,9 +13,27 @@ extension CritterRig.Body {
             p.addCurve(to: CGPoint(x: 61, y: 92.5), control1: CGPoint(x: 53.2, y: 92), control2: CGPoint(x: 56.5, y: 92.5))
             p.addCurve(to: CGPoint(x: 69, y: 81), control1: CGPoint(x: 66, y: 92.5), control2: CGPoint(x: 68.6, y: 88.5))
             p.addCurve(to: CGPoint(x: 65, y: 54), control1: CGPoint(x: 69.5, y: 72), control2: CGPoint(x: 67.5, y: 62))
+        case .sitting:
+            p.move(to: CGPoint(x: 34.5, y: 61))
+            p.addCurve(to: CGPoint(x: 29, y: 85), control1: CGPoint(x: 32, y: 68), control2: CGPoint(x: 28.5, y: 77))
+            p.addCurve(to: CGPoint(x: 38, y: 92.5), control1: CGPoint(x: 29.5, y: 90.5), control2: CGPoint(x: 33, y: 92.5))
+            p.addLine(to: CGPoint(x: 62, y: 92.5))
+            p.addCurve(to: CGPoint(x: 71, y: 85), control1: CGPoint(x: 67, y: 92.5), control2: CGPoint(x: 70.5, y: 90.5))
+            p.addCurve(to: CGPoint(x: 65.5, y: 61), control1: CGPoint(x: 71.5, y: 77), control2: CGPoint(x: 68, y: 68))
         }
         p.closeSubpath()
         return p
+    }
+
+    var feet: [Path] {
+        switch self {
+        case .standing: []
+        case .sitting:
+            [(39, -0.26), (61, 0.26)].map { x, a in
+                Path(ellipseIn: CGRect(x: -5.6, y: -6.3, width: 11.2, height: 12.6))
+                    .applying(CGAffineTransform(rotationAngle: a).concatenating(.init(translationX: x, y: 86.3)))
+            }
+        }
     }
 }
 
@@ -39,6 +57,7 @@ extension CritterInk {
         let chin = CGAffineTransform(scaleX: 1.14, y: 1.14).rotated(by: rig.tilt.radians).concatenating(.init(translationX: rig.head.x, y: rig.head.y + 3))
         shade.fill(species.head.applying(chin), with: .color(fur.shade))
         outline(body)
+        for foot in rig.body.feet { shape(foot, fur.base) }
         at(rig.head, tilt: rig.tilt).head(species, fur: fur, mood: mood)
         for limb in rig.front { tube(limb.path, width: limb.width, fur.base) }
     }
