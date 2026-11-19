@@ -30,6 +30,7 @@ struct ShowcaseBody: View {
             ShowcaseSection(title: "Cards", note: "Warm white stickers with a colored edge, or soft tinted panels.") { CardBoard() }
             ShowcaseSection(title: "Icons", note: "Drawn with the same brown ink as the characters.") { IconBoard() }
             ShowcaseSection(title: "Characters in the UI", note: "Empty and loading screens, activity picks and the tab bar all use the characters.") { InAppBoard() }
+            ShowcaseSection(title: "Widgets", note: "Your partner's character, what they're up to, and their colors.") { WidgetBoard() }
         }
         .sheet(isPresented: $concept) { HomeConcept { concept = false } }
     }
@@ -205,5 +206,32 @@ private struct InAppBoard: View {
             StickerTabBar(selection: $tab, items: [("Home", .home), ("Style", .palette), ("Activities", .star), ("Settings", .gear)], tint: .butter)
                 .padding(.top, Space.xl)
         }
+    }
+}
+
+private struct WidgetBoard: View {
+    var body: some View {
+        HStack(spacing: Space.l) {
+            tile(.cat, pose: .idle, name: "blake", icon: .headphones, tint: .sky)
+            tile(.rabbit, pose: .sleeping, name: "sam", icon: .moon, tint: .lavender)
+        }
+    }
+
+    private func tile(_ species: Species, pose: CritterPose, name: String, icon: Icon, tint: Tint) -> some View {
+        VStack(spacing: 0) {
+            CritterView(species, pose: pose).frame(width: 132).padding(.top, -8)
+            HStack(spacing: Space.xs) {
+                IconView(icon: icon, size: 18)
+                Text(name).font(Typeface.caption)
+            }
+            .padding(.horizontal, Space.s)
+            .padding(.vertical, Space.xs)
+            .sticker(Palette.warmWhite, depth: 0, corner: 14, line: Line.card, seed: name.count)
+            .offset(y: -14)
+        }
+        .frame(width: 158, height: 158)
+        .background(Backdrop(tint: tint))
+        .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
+        .overlay { RoundedRectangle(cornerRadius: 30, style: .continuous).stroke(Palette.ink.opacity(0.12), lineWidth: 1) }
     }
 }
