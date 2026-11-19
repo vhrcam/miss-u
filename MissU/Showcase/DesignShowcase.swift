@@ -23,6 +23,7 @@ struct ShowcaseBody: View {
             ShowcaseSection(title: "Home concept", note: "The two of you are the main thing on screen. Everything else supports them.") {
                 Button("Open the home concept") { concept = true }.buttonStyle(.candy(.peach))
             }
+            ShowcaseSection(title: "Characters", note: "Four animals, one family: standing, sitting, sleeping and holding a heart.") { CritterGallery() }
             ShowcaseSection(title: "Colors", note: "Every hue comes as soft, fill and deep. Screens pick one as their personality.") { PaletteBoard() }
             ShowcaseSection(title: "Type", note: "Fredoka, round and chunky like the characters.") { TypeBoard() }
             ShowcaseSection(title: "Buttons", note: "Candy for the main action, soft for the second, a squiggle for small links.") { ButtonBoard() }
