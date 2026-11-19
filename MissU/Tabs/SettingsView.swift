@@ -4,6 +4,7 @@ struct SettingsView: View {
     @Environment(AppModel.self) private var model
     @State private var confirmDisconnect = false
     @State private var confirmDelete = false
+    @State private var showcase = false
 
     var body: some View {
         @Bindable var model = model
@@ -84,12 +85,18 @@ struct SettingsView: View {
                         Button("Delete account", role: .destructive) { confirmDelete = true }
                     }
                 }
+                #if DEBUG
+                Section("Design") {
+                    Button("Open the design preview") { showcase = true }
+                }
+                #endif
             }
             .tint(Theme.rose)
             .font(.rounded(16, .medium))
             .scrollContentBackground(.hidden)
             .background(Theme.cream.ignoresSafeArea())
             .navigationTitle("Settings")
+            .fullScreenCover(isPresented: $showcase) { DesignShowcase { showcase = false } }
             .confirmationDialog("Disconnect from your partner?", isPresented: $confirmDisconnect, titleVisibility: .visible) {
                 Button("Disconnect", role: .destructive) { Task { await model.disconnect() } }
             }

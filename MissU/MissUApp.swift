@@ -46,6 +46,9 @@ struct RootView: View {
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { Task { await model.becameActive() } }
         }
+        #if DEBUG
+        .fullScreenCover(isPresented: .constant(CommandLine.arguments.contains("-showcase"))) { DesignShowcase() }
+        #endif
     }
 }
 
