@@ -16,13 +16,7 @@ struct CoupleStage: View {
                 Spacer()
             }
             .frame(height: 64, alignment: .bottom)
-            ZStack(alignment: .bottom) {
-                Ground(width: 230).offset(y: -6)
-                HStack(alignment: .bottom, spacing: -34) {
-                    CritterView(partner).frame(width: 172)
-                    CritterView(me).frame(width: 172)
-                }
-            }
+            HoldingHands(partner, me).frame(width: 290)
             HStack {
                 Text(partnerName).frame(maxWidth: .infinity)
                 Text("you").frame(maxWidth: .infinity)
