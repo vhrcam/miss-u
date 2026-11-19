@@ -18,15 +18,6 @@ extension Species {
         p.closeSubpath()
         return p
     }
-
-    var crown: CGFloat {
-        switch self {
-        case .cat: -33
-        case .bear: -25
-        case .dog: -23
-        case .rabbit: -48
-        }
-    }
 }
 
 extension CritterInk {
