@@ -54,7 +54,7 @@ extension CritterRig.Limb {
 }
 
 extension CritterInk {
-    func critter(_ species: Species, fur: Fur, rig: CritterRig, mood: CritterMood) {
+    func critter(_ species: Species, fur: Fur, rig: CritterRig, mood: CritterMood, blink: Bool = false) {
         context.fill(Path(ellipseIn: rig.shadow), with: .color(Palette.ground))
         for limb in rig.back { tube(limb.path, width: limb.width, fur.base) }
         let body = rig.body.path
@@ -65,7 +65,7 @@ extension CritterInk {
         shade.fill(species.head.applying(chin), with: .color(fur.shade))
         outline(body)
         for foot in rig.body.feet { shape(foot, fur.base) }
-        at(rig.head, tilt: rig.tilt).head(species, fur: fur, mood: mood)
+        at(rig.head, tilt: rig.tilt).head(species, fur: fur, mood: mood, blink: blink)
         for limb in rig.front { tube(limb.path, width: limb.width, fur.base) }
         for prop in rig.props { self.prop(prop) }
     }

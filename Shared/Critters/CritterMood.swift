@@ -5,13 +5,14 @@ enum CritterMood: CaseIterable {
 }
 
 extension CritterInk {
-    func face(_ mood: CritterMood) {
+    func face(_ mood: CritterMood, blink: Bool = false) {
+        let eyes: CritterMood = blink && mood != .love ? .sleepy : mood
         for s: CGFloat in [-1, 1] {
             context.fill(Path(ellipseIn: CGRect(x: s * 17 - 4.3, y: 5.7, width: 8.6, height: 5.6)), with: .color(Palette.cheek.opacity(mood == .love ? 0.95 : 0.7)))
             let x = s * 10.5, y: CGFloat = 3
-            switch mood {
+            switch eyes {
             case .happy, .surprised:
-                let r: CGFloat = mood == .surprised ? 2.9 : 2.5
+                let r: CGFloat = eyes == .surprised ? 2.9 : 2.5
                 context.fill(Path(ellipseIn: CGRect(x: x - r, y: y - r, width: r * 2, height: r * 2)), with: .color(Palette.ink))
                 context.fill(Path(ellipseIn: CGRect(x: x + 0.1, y: y - r + 0.6, width: 1.3, height: 1.3)), with: .color(.white))
             case .love:

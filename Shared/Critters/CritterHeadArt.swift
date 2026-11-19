@@ -21,7 +21,7 @@ extension Species {
 }
 
 extension CritterInk {
-    func head(_ species: Species, fur: Fur, mood: CritterMood) {
+    func head(_ species: Species, fur: Fur, mood: CritterMood, blink: Bool = false) {
         let flip = CGAffineTransform(scaleX: -1, y: 1)
         switch species {
         case .cat:
@@ -61,7 +61,7 @@ extension CritterInk {
             break
         }
         shape(species.head, fur.base)
-        face(mood)
+        face(mood, blink: blink)
         if species == .dog {
             var ear = Path()
             ear.move(to: CGPoint(x: 14, y: -17.5))
