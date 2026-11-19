@@ -40,7 +40,7 @@ struct EmptyState: View {
 
     var body: some View {
         VStack(spacing: Space.s) {
-            CritterView(species, pose: pose).frame(width: 130)
+            CritterView(species, pose: pose, animated: true).frame(width: 130)
             Text(title).font(Typeface.headline)
             Text(message)
                 .font(Typeface.caption)
