@@ -14,10 +14,13 @@
 	</dict>
 	<key>UIAppFonts</key>
 	<array>
-		<string>Fredoka-Regular.ttf</string>
-		<string>Fredoka-Medium.ttf</string>
-		<string>Fredoka-SemiBold.ttf</string>
-		<string>Fredoka-Bold.ttf</string>
+		<string>FrauncesSoft-Medium.ttf</string>
+		<string>FrauncesSoft-SemiBold.ttf</string>
+		<string>Nunito-Regular.ttf</string>
+		<string>Nunito-Medium.ttf</string>
+		<string>Nunito-SemiBold.ttf</string>
+		<string>Nunito-Bold.ttf</string>
+		<string>Nunito-ExtraBold.ttf</string>
 	</array>
 </dict>
 </plist>
