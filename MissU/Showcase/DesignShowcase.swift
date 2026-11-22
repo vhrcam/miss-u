@@ -16,25 +16,14 @@ struct DesignShowcase: View {
 struct ShowcaseBody: View {
     var close: (() -> Void)?
     @State private var concept = false
-    @State private var study = false
-    @State private var concepts = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 44) {
             header
-            ShowcaseSection(title: "Character concepts", note: "Three original ideas for who the characters are, each shown hugging first.") {
-                Button("Open the character concepts") { concepts = true }.buttonStyle(.primary(.lavender))
-            }
-            ShowcaseSection(title: "Character study", note: "Outline-free characters in three finishes, and the bear holding the cat close.") {
-                Button("Open the character study") { study = true }.buttonStyle(.primary(.pink))
-            }
             ShowcaseSection(title: "Home", note: "The two of you are the heart of the screen. Everything else is there to support them.") {
                 Button("Open the home concept") { concept = true }.buttonStyle(.primary(.peach))
             }
-            ShowcaseSection(title: "Characters", note: "They breathe, blink and flick an ear on their own. Tap one, or pick a pose and watch them move into it.") { CharacterBoard() }
-            ShowcaseSection(title: "Together", note: "Holding hands, they glance at each other now and then. Tap either of them.") {
-                HoldingHands(.cat, .bear, animated: true).frame(maxWidth: 320).frame(maxWidth: .infinity)
-            }
+            ShowcaseSection(title: "Characters", note: "Simple, natural and soft. They breathe and blink on their own; tap one and it beams.") { CharacterBoard() }
             ShowcaseSection(title: "Presence", note: "Characters hold on to the edges of things instead of floating on top of them.") { PresenceBoard() }
             ShowcaseSection(title: "Colors", note: "Every hue comes soft, glowing, filled and deep. Color goes where it means something.") { PaletteBoard() }
             ShowcaseSection(title: "Type", note: "Fraunces for headings, soft and a little storybook. Nunito for everything you read.") { TypeBoard() }
@@ -45,11 +34,9 @@ struct ShowcaseBody: View {
             ShowcaseSection(title: "In the app", note: "Empty and loading screens, activity picks and the tab bar all have a character in them.") { InAppBoard() }
             ShowcaseSection(title: "Widgets", note: "Your partner's character, what they're up to, and their colors.") { WidgetBoard() }
             ShowcaseSection(title: "Notifications", note: "iOS draws the banner, but the picture and the thumbnail can be your partner's character and our artwork.") { NotificationBoard() }
-            ShowcaseSection(title: "Every pose", note: "Four animals, one family.") { CritterGallery() }
         }
         .sheet(isPresented: $concept) { HomeConcept { concept = false } }
-        .sheet(isPresented: $study) { CharacterStudy { study = false } }
-        .sheet(isPresented: $concepts) { CharacterConcepts { concepts = false } }
+
     }
 
     private var header: some View {
@@ -86,22 +73,12 @@ struct ShowcaseSection<Content: View>: View {
 }
 
 private struct CharacterBoard: View {
-    @State private var pose = CritterPose.idle
-    private let poses: [(CritterPose, String, Icon, Tint)] = [
-        (.idle, "Stand", .star, .butter), (.sitting, "Sit", .home, .peach),
-        (.sleeping, "Sleep", .moon, .lavender), (.heart, "Love", .heart, .pink),
-    ]
-
     var body: some View {
         VStack(spacing: Space.l) {
+            CoupleScene(.cat, .bear, animated: true).frame(maxWidth: 320).frame(maxWidth: .infinity)
             HStack(alignment: .bottom, spacing: 0) {
                 ForEach(Species.allCases, id: \.self) { species in
-                    CritterView(species, pose: pose, animated: true, interactive: true).frame(maxWidth: .infinity)
-                }
-            }
-            LazyVGrid(columns: [GridItem(.flexible(), alignment: .leading), GridItem(.flexible(), alignment: .leading)], spacing: Space.s) {
-                ForEach(poses.indices, id: \.self) { i in
-                    ActivityChip(icon: poses[i].2, label: poses[i].1, tint: poses[i].3, selected: pose == poses[i].0) { pose = poses[i].0 }
+                    StandingCreature(species, pose: CreaturePose(turn: species == .bear || species == .rabbit ? -0.15 : 0.2)).frame(maxWidth: .infinity)
                 }
             }
         }
@@ -121,14 +98,14 @@ private struct PresenceBoard: View {
             }
             .surface(.pink)
             .overlay(alignment: .topTrailing) {
-                CritterPeek(.cat, gaze: -0.6)
+                CreaturePeek(.cat)
                     .frame(width: 76)
                     .padding(.trailing, Space.xl)
                     .alignmentGuide(.top) { $0[.bottom] }
             }
             .padding(.top, 44)
             Button("Send blake a kiss") {}
-                .buttonStyle(PrimaryButtonStyle(tint: .pink, peek: CritterPeek(.cat, mood: .love)))
+                .buttonStyle(PrimaryButtonStyle(tint: .pink, peek: CreaturePeek(.cat)))
                 .padding(.top, 40)
         }
     }
@@ -259,7 +236,7 @@ private struct InAppBoard: View {
 
     var body: some View {
         VStack(spacing: Space.l) {
-            EmptyState(species: .rabbit, pose: .sleeping, title: "No activity yet", message: "When blake shares what they're up to, it shows up here.")
+            EmptyState(species: .rabbit, title: "No activity yet", message: "When blake shares what they're up to, it shows up here.")
                 .surface()
             HStack {
                 CritterLoader(species: .dog)
@@ -273,7 +250,7 @@ private struct InAppBoard: View {
                 ActivityChip(icon: .sneaker, label: "Gym", tint: .mint, selected: doing == 2) { doing = 2 }
             }
             SoftTabBar(selection: $tab, items: [("Home", .home), ("Style", .palette), ("Activities", .star), ("Settings", .gear)], tint: .butter) {
-                CritterPeek(.rabbit)
+                CreaturePeek(.rabbit).padding(.horizontal, 4)
             }
             .padding(.top, 56)
         }
@@ -290,7 +267,7 @@ private struct WidgetBoard: View {
 
     private func tile(_ species: Species, pose: CritterPose, name: String, icon: Icon, tint: Tint) -> some View {
         VStack(spacing: 0) {
-            CritterView(species, pose: pose).frame(width: 128).padding(.top, -6)
+            StandingCreature(species, pose: pose == .sleeping ? CreaturePose(turn: -0.2, eyes: .content) : CreaturePose(turn: 0.2), animated: false).frame(width: 82).padding(.top, 4)
             HStack(spacing: Space.xs) {
                 IconView(icon: icon, size: 16)
                 Text(name).font(Typeface.caption)
@@ -322,7 +299,7 @@ private struct NotificationBoard: View {
 
     private func banner(_ species: Species, tint: Tint, name: String, text: String, icon: Icon) -> some View {
         HStack(spacing: Space.m) {
-            CritterHead(species)
+            CreatureHead(species)
                 .frame(width: 34, height: 34)
                 .padding(5)
                 .background(Circle().fill(LinearGradient(colors: [tint.glow, tint.soft], startPoint: .top, endPoint: .bottom)))

@@ -37,7 +37,7 @@ struct CreaturePainter {
         let coat = colors.coat
         let s = form.size
         var outer = context
-        if r.halo > 0 { outer.addFilter(.shadow(color: Palette.shadow.opacity(r.halo), radius: 2.2 * s, x: 0.4 * s, y: 1.4 * s)) }
+        if r.halo > 0 { outer.addFilter(.shadow(color: Palette.shadow.opacity(r.halo * (species == .rabbit ? 2.2 : 1)), radius: 2.2 * s, x: 0.4 * s, y: 1.4 * s)) }
         outer.drawLayer { layer in
             layer.merged(form.silhouette, color: coat.base, round: 1.6 * s, soft: 0.45 / px)
             var inside = layer
@@ -113,16 +113,28 @@ struct CreaturePainter {
                 inside.crescent(form.torso, away: CGSize(width: 0, height: -2.2 * s), color: coat.light, opacity: r.bounce, blur: 1.3 * s)
             }
 
+            if !form.frontArms.isEmpty {
+                inside.soft(form.frontArms.map { $0.offsetBy(dx: 0.5 * s, dy: 1.1 * s) }, color: coat.deep, opacity: occ * 0.55, blur: ob * 0.7)
+                for arm in form.frontArms { part(layer, [arm], coat, s) }
+            }
             if !form.paws.isEmpty {
                 inside.soft(form.paws.map { $0.offsetBy(dx: 0.5 * s, dy: 1.2 * s) }, color: coat.deep, opacity: occ * 0.6, blur: ob * 0.7)
-                part(layer, form.paws, colors.coat, s)
+                part(layer, form.paws, form.whiteFeet ? colors.muzzle ?? coat : coat, s)
             }
             if !form.frontEars.isEmpty {
                 inside.soft(form.frontEars.map { $0.offsetBy(dx: 0.6 * s, dy: 1.4 * s) }, color: coat.deep, opacity: occ * 0.7, blur: ob)
                 part(layer, form.frontEars, colors.accent, s)
             }
+            if let snout = form.snout {
+                inside.soft([snout.offsetBy(dx: 0.3 * s, dy: 1.5 * s)], color: coat.deep, opacity: occ * 0.5, blur: ob * 0.8)
+                part(layer, [snout], colors.muzzle ?? coat, s)
+            }
 
-            face(layer, species, form, pose)
+            if form.natural {
+                naturalFace(layer, species, form, pose)
+            } else {
+                face(layer, species, form, pose)
+            }
         }
     }
 
@@ -168,6 +180,94 @@ struct CreaturePainter {
         h.opacity *= opacity
         h.fill(p, with: .radialGradient(Gradient(colors: [Palette.heartLight, Palette.heartBase, Palette.heartDeep]),
                                         center: CGPoint(x: c.x - w * 0.16, y: c.y - w * 0.22), startRadius: 0, endRadius: w * 0.8))
+    }
+
+    /// Eyes set naturally for each animal, a nose on the snout, a small mouth, barely any blush.
+    private func naturalFace(_ layer: GraphicsContext, _ species: Species, _ form: CreatureForm, _ pose: CreaturePose) {
+        var f = layer
+        f.concatenate(form.face)
+        let t = pose.turn
+        let line = max(0.95, 0.65 / (px * form.size))
+
+        for side: CGFloat in [-1, 1] {
+            var b = f
+            b.translateBy(x: side * 12.6 + t * 2, y: 4.6)
+            b.scaleBy(x: 1, y: 0.55)
+            b.fill(Path(ellipseIn: CGRect(x: -4.8, y: -4.8, width: 9.6, height: 9.6)),
+                   with: .radialGradient(Gradient(colors: [Palette.cheek.opacity(pose.blush * 0.5), Palette.cheek.opacity(0)]), center: .zero, startRadius: 0, endRadius: 4.8))
+        }
+
+        let gx = pose.gaze.x * 1.1 + t * 2.4, gy = pose.gaze.y * 0.8
+        for side: CGFloat in [-1, 1] {
+            let x = side * 8.4 + gx, y = -1.6 + gy
+            switch pose.eyes {
+            case .open:
+                let open = max(0.08, 1 - pose.blink)
+                if open > 0.25 {
+                    var e = f
+                    e.translateBy(x: x, y: y)
+                    if species == .cat { e.rotate(by: .degrees(Double(-side * 10))) }
+                    let (rx, ry): (CGFloat, CGFloat) = switch species {
+                    case .cat: (2.4, 3.1)
+                    case .bear: (2.15, 2.3)
+                    case .dog, .rabbit: (2.35, 2.6)
+                    }
+                    e.fill(Path(ellipseIn: CGRect(x: -rx, y: -ry * open, width: rx * 2, height: ry * 2 * open)), with: .color(Palette.eye))
+                    if open > 0.8 {
+                        e.fill(Path(ellipseIn: CGRect(x: rx * 0.05, y: -ry * 0.78, width: 1.25, height: 1.25)), with: .color(.white.opacity(0.95)))
+                    }
+                } else {
+                    var lid = Path()
+                    lid.move(to: CGPoint(x: x - 2.4, y: y))
+                    lid.addQuadCurve(to: CGPoint(x: x + 2.4, y: y), control: CGPoint(x: x, y: y + 1))
+                    f.stroke(lid, with: .color(Palette.eye), style: StrokeStyle(lineWidth: line, lineCap: .round))
+                }
+            case .content:
+                var lid = Path()
+                lid.move(to: CGPoint(x: x - 2.5, y: y - 0.2))
+                lid.addQuadCurve(to: CGPoint(x: x + 2.5, y: y - 0.2), control: CGPoint(x: x, y: y + 2.2))
+                f.stroke(lid, with: .color(Palette.eye), style: StrokeStyle(lineWidth: line, lineCap: .round))
+            case .happy:
+                var lid = Path()
+                lid.move(to: CGPoint(x: x - 2.5, y: y + 0.9))
+                lid.addQuadCurve(to: CGPoint(x: x + 2.5, y: y + 0.9), control: CGPoint(x: x, y: y - 2.2))
+                f.stroke(lid, with: .color(Palette.eye), style: StrokeStyle(lineWidth: line, lineCap: .round))
+            }
+        }
+
+        let nx = t * 1.4
+        switch species {
+        case .cat:
+            var nose = Path()
+            nose.addLines([CGPoint(x: nx - 1.7, y: 2.4), CGPoint(x: nx + 1.7, y: 2.4), CGPoint(x: nx, y: 4.3)])
+            nose.closeSubpath()
+            f.fill(nose, with: .color(Palette.nose))
+            f.stroke(nose, with: .color(Palette.nose), style: StrokeStyle(lineWidth: 0.9, lineJoin: .round))
+        case .rabbit:
+            f.fill(Path(ellipseIn: CGRect(x: nx - 1.4, y: 2.8, width: 2.8, height: 1.9)), with: .color(Palette.nose))
+        case .bear, .dog:
+            let (rx, ry): (CGFloat, CGFloat) = species == .dog ? (3.4, 2.4) : (3.2, 2.3)
+            f.fill(Path(ellipseIn: CGRect(x: nx - rx, y: 3.4 - ry, width: rx * 2, height: ry * 2)), with: .color(Palette.eye))
+            f.fill(Path(ellipseIn: CGRect(x: nx - rx * 0.5, y: 3.4 - ry * 0.75, width: rx * 0.6, height: ry * 0.5)), with: .color(.white.opacity(0.45)))
+        }
+
+        var mouth = Path()
+        switch species {
+        case .cat, .rabbit:
+            let top: CGFloat = species == .cat ? 4.3 : 4.7
+            mouth.move(to: CGPoint(x: nx, y: top))
+            mouth.addLine(to: CGPoint(x: nx, y: top + 2.6))
+            mouth.move(to: CGPoint(x: nx - 2.7, y: top + 3))
+            mouth.addQuadCurve(to: CGPoint(x: nx, y: top + 2.6), control: CGPoint(x: nx - 1.3, y: top + 4.4))
+            mouth.addQuadCurve(to: CGPoint(x: nx + 2.7, y: top + 3), control: CGPoint(x: nx + 1.3, y: top + 4.4))
+        case .bear, .dog:
+            mouth.move(to: CGPoint(x: nx, y: 5.7))
+            mouth.addLine(to: CGPoint(x: nx, y: 8))
+            mouth.move(to: CGPoint(x: nx - 3.2, y: 8.4))
+            mouth.addQuadCurve(to: CGPoint(x: nx, y: 8), control: CGPoint(x: nx - 1.5, y: 9.9))
+            mouth.addQuadCurve(to: CGPoint(x: nx + 3.2, y: 8.4), control: CGPoint(x: nx + 1.5, y: 9.9))
+        }
+        f.stroke(mouth, with: .color(Palette.mouth), style: StrokeStyle(lineWidth: line * 0.8, lineCap: .round, lineJoin: .round))
     }
 
     private func face(_ layer: GraphicsContext, _ species: Species, _ form: CreatureForm, _ pose: CreaturePose) {

@@ -40,6 +40,10 @@ struct CreatureForm {
     var place: CGAffineTransform
     var base: CGPoint
     var size: CGFloat
+    var snout: Path? = nil
+    var frontArms: [Path] = []
+    var whiteFeet = false
+    var natural = false
 
     var silhouette: [Path] { torso + [head] + ears + (tail.map { [$0] } ?? []) }
 }

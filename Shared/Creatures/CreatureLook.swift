@@ -47,8 +47,8 @@ enum CreatureFinish: String, CaseIterable, Identifiable {
             Recipe(shadow: 0.62, shadowBlur: 0.35, shadowReach: 9, core: 0, light: 0, lightBlur: 0.35, lightReach: 4.5,
                    wash: 0, edge: 0, edgeWidth: 0, bounce: 0, occlusion: 0.42, occlusionBlur: 0.5, occlusionReach: 4, halo: 0)
         case .tonal:
-            Recipe(shadow: 0.42, shadowBlur: 3, shadowReach: 6, core: 0, light: 0.35, lightBlur: 3.5, lightReach: 5,
-                   wash: 0.22, edge: 1, edgeWidth: 0.95, bounce: 0.15, occlusion: 0.6, occlusionBlur: 1.8, occlusionReach: 2.8, halo: 0.06)
+            Recipe(shadow: 0.5, shadowBlur: 2.6, shadowReach: 6, core: 0, light: 0.4, lightBlur: 3, lightReach: 5,
+                   wash: 0.16, edge: 0.5, edgeWidth: 0.9, bounce: 0.2, occlusion: 0.6, occlusionBlur: 1.5, occlusionReach: 2.6, halo: 0.07)
         case .soft:
             Recipe(shadow: 1, shadowBlur: 6.5, shadowReach: 11, core: 0.65, light: 0.9, lightBlur: 6, lightReach: 8,
                    wash: 0.35, edge: 0.1, edgeWidth: 2.2, bounce: 0.8, occlusion: 0.9, occlusionBlur: 3, occlusionReach: 3.2, halo: 0.12)
@@ -76,23 +76,27 @@ struct CreatureColors {
     let accent: Coat
     let inner: Color
     let patch: Color
+    var muzzle: Coat? = nil
 }
 
 extension Species {
     var colors: CreatureColors {
         switch self {
         case .cat:
-            let coat = Coat(0xE8DCD4, 0xC4B3A9, 0x9F8B83, 0x826D67)
-            return CreatureColors(coat: coat, accent: coat, inner: Color(hex: 0xF0A7A0), patch: Color(hex: 0xEDE5DE))
+            let coat = Coat(0xDAD3CE, 0xBDB4AE, 0x9E9590, 0x847B77)
+            return CreatureColors(coat: coat, accent: coat, inner: Color(hex: 0xEEA7A1), patch: Color(hex: 0xF8F4F0),
+                                  muzzle: Coat(0xFFFFFF, 0xF8F4F0, 0xE0D8D2, 0xC9BFB9))
         case .bear:
-            let coat = Coat(0xF7DDC1, 0xE5B98F, 0xCA986E, 0xAE7D57)
-            return CreatureColors(coat: coat, accent: coat, inner: Color(hex: 0xF0AC9B), patch: Color(hex: 0xF8E6D2))
+            let coat = Coat(0xD9A47A, 0xBF8658, 0x9F6A43, 0x855634)
+            return CreatureColors(coat: coat, accent: coat, inner: Color(hex: 0xE3B49A), patch: Color(hex: 0xEACFAE),
+                                  muzzle: Coat(0xF5E3CD, 0xE8CCA9, 0xD1AF8A, 0xBC9973))
         case .dog:
-            return CreatureColors(coat: Coat(0xFFFBF5, 0xF7E9DA, 0xE2C8AE, 0xCBAB8D), accent: Coat(0xEECBA6, 0xDCA87B, 0xC1885B, 0xA67049),
-                                  inner: Color(hex: 0xF4B2A3), patch: Color(hex: 0xFFFAF4))
+            return CreatureColors(coat: Coat(0xF0D2AE, 0xE2B888, 0xC9996A, 0xAE7E52), accent: Coat(0xE0B184, 0xCC9764, 0xB07A4A, 0x956138),
+                                  inner: Color(hex: 0xF0B3A2), patch: Color(hex: 0xFBF3E9), muzzle: Coat(0xFFFDF8, 0xFBF3E9, 0xE7D7C4, 0xD3C0A9))
         case .rabbit:
-            let coat = Coat(0xFFFFFF, 0xFBF4F1, 0xE8D7D5, 0xD2BDBB)
-            return CreatureColors(coat: coat, accent: coat, inner: Color(hex: 0xF5B2BA), patch: Color(hex: 0xFFFFFF))
+            let coat = Coat(0xFFFFFF, 0xF6EFEC, 0xDACBC8, 0xBFACA9)
+            return CreatureColors(coat: coat, accent: coat, inner: Color(hex: 0xF3B0B8), patch: Color(hex: 0xFFFFFF),
+                                  muzzle: Coat(0xFFFFFF, 0xFFFCFA, 0xEDE3E0, 0xDCCFCC))
         }
     }
 }

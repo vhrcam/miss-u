@@ -20,8 +20,8 @@ struct CoupleStage: View {
             }
             .padding(.leading, Space.xxl)
             .frame(height: 56, alignment: .bottom)
-            HoldingHands(partner, me, animated: true, react: react)
-                .frame(width: 300)
+            CoupleScene(partner, me, animated: true, react: react)
+                .frame(width: 290)
             HStack {
                 Text(partnerName).frame(maxWidth: .infinity)
                 Text("you").frame(maxWidth: .infinity)
@@ -45,13 +45,12 @@ struct CoupleStage: View {
 
 struct EmptyState: View {
     var species: Species
-    var pose: CritterPose = .sitting
     var title: String
     var message: String
 
     var body: some View {
         VStack(spacing: Space.s) {
-            CritterView(species, pose: pose, animated: true, interactive: true).frame(width: 132)
+            StandingCreature(species, pose: CreaturePose(tilt: 6, turn: 0.2)).frame(width: 92)
             Text(title).font(Typeface.headline)
             Text(message)
                 .font(Typeface.caption)
@@ -70,8 +69,8 @@ struct CritterLoader: View {
 
     var body: some View {
         VStack(spacing: Space.s) {
-            CritterView(species, pose: .sitting, animated: true)
-                .frame(width: 92)
+            StandingCreature(species, pose: CreaturePose(turn: -0.15))
+                .frame(width: 70)
                 .phaseAnimator([false, true]) { view, up in
                     view.offset(y: up ? -5 : 0)
                 } animation: { _ in .easeInOut(duration: 0.9) }

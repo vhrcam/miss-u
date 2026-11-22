@@ -22,7 +22,7 @@ struct HomeConcept: View {
         }
         .safeAreaInset(edge: .bottom, spacing: 0) {
             SoftTabBar(selection: $tab, items: [("Home", .home), ("Style", .palette), ("Activities", .star), ("Settings", .gear)]) {
-                CritterPeek(.bear)
+                CreaturePeek(.bear).padding(.horizontal, 4)
             }
             .padding(.horizontal, Space.xl)
             .padding(.top, 48)

@@ -47,12 +47,8 @@ struct RootView: View {
             if phase == .active { Task { await model.becameActive() } }
         }
         #if DEBUG
-        .fullScreenCover(isPresented: .constant(["-showcase", "-home-concept", "-character-study", "-concepts"].contains { CommandLine.arguments.contains($0) })) {
-            if CommandLine.arguments.contains("-concepts") {
-                CharacterConcepts()
-            } else if CommandLine.arguments.contains("-character-study") {
-                CharacterStudy()
-            } else if CommandLine.arguments.contains("-home-concept") {
+        .fullScreenCover(isPresented: .constant(["-showcase", "-home-concept"].contains { CommandLine.arguments.contains($0) })) {
+            if CommandLine.arguments.contains("-home-concept") {
                 HomeConcept()
             } else {
                 DesignShowcase()

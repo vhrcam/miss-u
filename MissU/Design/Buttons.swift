@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// The main action: a soft gradient pillow lit from above, casting a shadow in its own color.
-/// It sinks a touch when pressed. A `peek` (usually a `CritterPeek`) holds on to its top edge.
+/// It sinks a touch when pressed. A `peek` (usually a `CreaturePeek`) holds on to its top edge.
 struct PrimaryButtonStyle<Peek: View>: ButtonStyle {
     var tint: Tint = .pink
     var fullWidth = true
