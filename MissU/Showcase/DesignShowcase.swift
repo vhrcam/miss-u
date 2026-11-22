@@ -16,10 +16,14 @@ struct DesignShowcase: View {
 struct ShowcaseBody: View {
     var close: (() -> Void)?
     @State private var concept = false
+    @State private var study = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 44) {
             header
+            ShowcaseSection(title: "Character study", note: "Outline-free characters in three finishes, and the bear holding the cat close.") {
+                Button("Open the character study") { study = true }.buttonStyle(.primary(.pink))
+            }
             ShowcaseSection(title: "Home", note: "The two of you are the heart of the screen. Everything else is there to support them.") {
                 Button("Open the home concept") { concept = true }.buttonStyle(.primary(.peach))
             }
@@ -40,6 +44,7 @@ struct ShowcaseBody: View {
             ShowcaseSection(title: "Every pose", note: "Four animals, one family.") { CritterGallery() }
         }
         .sheet(isPresented: $concept) { HomeConcept { concept = false } }
+        .sheet(isPresented: $study) { CharacterStudy { study = false } }
     }
 
     private var header: some View {
