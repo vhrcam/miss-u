@@ -13,6 +13,24 @@ struct HomeConcept: View {
     ]
 
     var body: some View {
+        Group {
+            if scrolls {
+                ScrollView { content }.scrollIndicators(.hidden)
+            } else {
+                content.frame(maxHeight: .infinity, alignment: .top)
+            }
+        }
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            SoftTabBar(selection: $tab, items: [("Home", .home), ("Style", .palette), ("Activities", .star), ("Settings", .gear)]) {
+                CritterPeek(.bear)
+            }
+            .padding(.horizontal, Space.xl)
+            .padding(.top, 48)
+        }
+        .backdrop(.pink)
+    }
+
+    private var content: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 0) {
@@ -27,7 +45,7 @@ struct HomeConcept: View {
             .padding(.horizontal, Space.xl)
 
             CoupleStage(me: .bear, partner: .cat, partnerName: "blake", bubble: (.headphones, "listening to music"), react: sent)
-                .padding(.top, Space.l)
+                .padding(.top, Space.s)
 
             VStack(alignment: .leading, spacing: Space.m) {
                 Text("Send some love").font(Typeface.headline)
@@ -42,26 +60,19 @@ struct HomeConcept: View {
                 }
             }
             .padding(.horizontal, Space.xl)
-            .padding(.top, Space.xxl)
+            .padding(.top, Space.xl)
 
             VStack(alignment: .leading, spacing: Space.xs) {
                 Text("What are you up to?").font(Typeface.headline).padding(.horizontal, Space.xl)
                 if scrolls {
                     ScrollView(.horizontal, showsIndicators: false) { chipRow }.scrollClipDisabled()
                 } else {
-                    Color.clear.frame(height: 68).overlay(alignment: .leading) { chipRow.fixedSize() }.clipped()
+                    Color.clear.frame(height: 60).overlay(alignment: .leading) { chipRow.fixedSize() }
                 }
             }
-            .padding(.top, Space.xxl)
-
-            Spacer(minLength: 0)
-            SoftTabBar(selection: $tab, items: [("Home", .home), ("Style", .palette), ("Activities", .star), ("Settings", .gear)]) {
-                CritterPeek(.bear)
-            }
-            .padding(.horizontal, Space.xl)
+            .padding(.top, Space.xl)
         }
         .padding(.top, Space.l)
-        .backdrop(.pink)
     }
 
     private var chipRow: some View {
@@ -70,7 +81,7 @@ struct HomeConcept: View {
                 ActivityChip(icon: chips[i].0, label: chips[i].1, tint: chips[i].2, selected: doing == i) { doing = i }
             }
         }
-        .padding(.vertical, Space.m)
+        .padding(.vertical, Space.s)
         .padding(.horizontal, Space.xl)
     }
 }

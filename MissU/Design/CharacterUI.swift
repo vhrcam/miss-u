@@ -19,9 +19,9 @@ struct CoupleStage: View {
                 Spacer(minLength: 0)
             }
             .padding(.leading, Space.xxl)
-            .frame(height: 62, alignment: .bottom)
+            .frame(height: 56, alignment: .bottom)
             HoldingHands(partner, me, animated: true, react: react)
-                .frame(width: 320)
+                .frame(width: 300)
             HStack {
                 Text(partnerName).frame(maxWidth: .infinity)
                 Text("you").frame(maxWidth: .infinity)
