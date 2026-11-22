@@ -17,6 +17,7 @@ struct CreaturePose {
     var tail: CGFloat = 0
     var tailSide: CGFloat = 1
     var arms: (left: Bool, right: Bool) = (true, true)
+    var reach: (left: CGFloat, right: CGFloat) = (0, 0)
     var breath: CGFloat = 0
     var blink: CGFloat = 0
 }

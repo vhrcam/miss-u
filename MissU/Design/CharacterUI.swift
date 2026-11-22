@@ -50,7 +50,7 @@ struct EmptyState: View {
 
     var body: some View {
         VStack(spacing: Space.s) {
-            StandingCreature(species, pose: CreaturePose(tilt: 6, turn: 0.2)).frame(width: 92)
+            StandingCreature(species, pose: species.idlePose).frame(width: 96)
             Text(title).font(Typeface.headline)
             Text(message)
                 .font(Typeface.caption)
@@ -69,8 +69,8 @@ struct CritterLoader: View {
 
     var body: some View {
         VStack(spacing: Space.s) {
-            StandingCreature(species, pose: CreaturePose(turn: -0.15))
-                .frame(width: 70)
+            StandingCreature(species, pose: species.idlePose)
+                .frame(width: 74)
                 .phaseAnimator([false, true]) { view, up in
                     view.offset(y: up ? -5 : 0)
                 } animation: { _ in .easeInOut(duration: 0.9) }

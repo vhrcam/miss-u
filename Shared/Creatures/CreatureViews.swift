@@ -31,7 +31,7 @@ struct StandingCreature: View {
     }
 
     private func canvas(_ date: Date?) -> some View {
-        CritterCanvas(frame: CGRect(x: -34, y: -98, width: 68, height: 102), headroom: 0) { paint in
+        CritterCanvas(frame: CGRect(x: -36, y: -84, width: 72, height: 88), headroom: 0) { paint in
             var pose = pose
             var heart: (CGPoint, Double)?
             if let date {
@@ -39,6 +39,8 @@ struct StandingCreature: View {
                 if pose.eyes == .open { pose.blink = CritterLife.blink(t) }
                 if !calm {
                     pose.breath = CGFloat(sin(t * 2 * .pi / 3.8))
+                    pose.lean += CGFloat(sin(t * 2 * .pi / 5.6)) * 1.6
+                    pose.tilt += CGFloat(sin(t * 2 * .pi / 5.6 + 1.2)) * 1.4
                     pose.tail += CGFloat(sin(t * 2 * .pi / 4.8)) * 6
                     pose.ears.right += CritterLife.earFlick(t) * 0.6
                 }
@@ -47,7 +49,7 @@ struct StandingCreature: View {
                     pose.eyes = .happy
                     pose.blush = 0.9
                 }
-                if let pop = reaction.pop, !calm { heart = (CGPoint(x: 0, y: -86 - 14 * pop), CritterLife.fade(Double(pop))) }
+                if let pop = reaction.pop, !calm { heart = (CGPoint(x: 0, y: -74 - 12 * pop), CritterLife.fade(Double(pop))) }
             }
             let painter = CreaturePainter(context: paint.context, finish: .tonal, px: paint.scale)
             let form = species.standing(pose, at: .zero, scale: 1)
@@ -118,26 +120,29 @@ struct CoupleScene: View {
     }
 
     private func canvas(_ date: Date?) -> some View {
-        CritterCanvas(frame: CGRect(x: 34, y: 2, width: 116, height: 104), headroom: 0) { paint in
+        CritterCanvas(frame: CGRect(x: 44, y: 2, width: 116, height: 104), headroom: 0) { paint in
             Self.draw(paint, left, right, at: date, leftAt: leftAt, rightAt: rightAt, calm: calm)
         }
     }
 
     static func draw(_ paint: CritterPaint, _ left: Species, _ right: Species, at date: Date?, leftAt: Date = .distantPast, rightAt: Date = .distantPast, calm: Bool = false) {
         let painter = CreaturePainter(context: paint.context, finish: .tonal, px: paint.scale)
-        var l = CreaturePose(lean: 6, tilt: 6, turn: 0.3, eyes: .content, blush: 0.75, ears: (left: -3, right: -9), tail: -6, tailSide: -1, arms: (left: true, right: false))
-        var r = CreaturePose(lean: -4, tilt: -8, turn: -0.3, gaze: CGPoint(x: -0.8, y: 0.45), blush: 0.6, arms: (left: false, right: true))
-        var heart: (CGPoint, Double)? = (CGPoint(x: 100, y: 16), 1)
+        var l = CreaturePose(lean: 8, tilt: 10, turn: 0.3, eyes: .content, blush: 0.8, ears: (left: -4, right: -30), tail: -10, tailSide: -1,
+                             arms: (left: true, right: false), reach: (left: 14, right: 0))
+        var r = CreaturePose(lean: -8, tilt: -12, turn: -0.3, gaze: CGPoint(x: -0.8, y: 0.5), blush: 0.65,
+                             arms: (left: false, right: true), reach: (left: 0, right: 16))
+        var heart: (CGPoint, Double)? = (CGPoint(x: 106, y: 12), 1)
         if let date {
             let t = date.timeIntervalSinceReferenceDate
             r.blink = CritterLife.blink(t + 1.1)
             if !calm {
                 l.breath = CGFloat(sin(t * 2 * .pi / 3.7 + 1.3))
                 r.breath = CGFloat(sin(t * 2 * .pi / 4.2))
-                l.tilt += CGFloat(sin(t * 2 * .pi / 5.5)) * 1.2
-                l.tail += CGFloat(sin(t * 2 * .pi / 4.6)) * 7
+                l.tilt += CGFloat(sin(t * 2 * .pi / 5.5)) * 1.4
+                r.tilt += CGFloat(sin(t * 2 * .pi / 6.2 + 0.8)) * 1
+                l.tail += CGFloat(sin(t * 2 * .pi / 4.6)) * 8
                 let p = CritterLife.cycle(t, 4.4)
-                heart = (CGPoint(x: 100 + 2.5 * sin(p * 5), y: 24 - 14 * p), CritterLife.fade(p))
+                heart = (CGPoint(x: 106 + 2.5 * sin(p * 5), y: 20 - 13 * p), CritterLife.fade(p))
             }
             for (at, isLeft) in [(leftAt, true), (rightAt, false)] {
                 let reaction = CritterLife.reaction(date.timeIntervalSince(at), calm: calm)
@@ -150,30 +155,30 @@ struct CoupleScene: View {
                     r.blush = 0.9
                 }
                 if let pop = reaction.pop, !calm {
-                    heart = (CGPoint(x: isLeft ? 76 : 118, y: 20 - 16 * pop), CritterLife.fade(Double(pop)))
+                    heart = (CGPoint(x: isLeft ? 82 : 128, y: 16 - 14 * pop), CritterLife.fade(Double(pop)))
                 }
             }
         }
 
-        let rightForm = right.standing(r, at: CGPoint(x: 122, y: 100), scale: 1.06)
-        let leftForm = left.standing(l, at: CGPoint(x: 78, y: 102), scale: 0.95)
+        let rightForm = right.standing(r, at: CGPoint(x: 129, y: 97), scale: 1.08)
+        let leftForm = left.standing(l, at: CGPoint(x: 81, y: 100), scale: 0.98)
         painter.ground(rightForm, width: 30)
         painter.paint(rightForm, right, r)
 
         let shoulder = right.standingShoulder(-1).applying(rightForm.place)
-        let far = left.standingShoulder(-1).applying(leftForm.place)
-        let arm = Sketch.tube(shoulder, CGPoint(x: shoulder.x - 8, y: shoulder.y - 1), CGPoint(x: far.x + 10, y: far.y - 2), CGPoint(x: far.x + 2, y: far.y + 0.5),
-                              from: 7.6 * 1.06, to: 7)
-        painter.limb(arm, right.colors.coat, size: 1.06)
+        let far = left.standingPaw(-1, reach: 30).applying(leftForm.place)
+        let around = Sketch.tube(shoulder, CGPoint(x: shoulder.x - 7, y: shoulder.y + 3), CGPoint(x: far.x + 9, y: far.y + 2), far,
+                                 from: 7.4 * 1.08, to: 7)
+        painter.limb(around, right.colors.coat, size: 1.08)
 
         painter.ground(leftForm, width: 28)
         painter.paint(leftForm, left, l)
 
         let near = left.standingShoulder(1).applying(leftForm.place)
-        let waist = CGPoint(x: 110, y: 78)
-        let hug = Sketch.tube(near, CGPoint(x: near.x + 5, y: near.y + 4), CGPoint(x: waist.x - 6, y: waist.y - 1), waist, from: 6.2 * 0.95, to: 5.6)
-        painter.limb(hug, left.colors.coat, size: 0.95)
-        painter.limb(Sketch.oval(CGPoint(x: far.x + 1, y: far.y + 0.6), 4.4, 3.6), right.colors.coat, size: 1.06)
+        let chest = CGPoint(x: -3, y: -19).applying(rightForm.place)
+        let hug = Sketch.tube(near, CGPoint(x: near.x + 4, y: near.y + 3), CGPoint(x: chest.x - 4, y: chest.y + 2), chest, from: 6.4 * 0.98, to: 6.2)
+        painter.limb(hug, left.colors.coat, size: 0.98)
+        painter.limb(Sketch.oval(CGPoint(x: far.x + 0.5, y: far.y), 4.4, 3.8), right.colors.coat, size: 1.08)
 
         if let (at, opacity) = heart {
             painter.heart(at: at, width: 7, opacity: opacity)

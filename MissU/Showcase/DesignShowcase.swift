@@ -78,7 +78,7 @@ private struct CharacterBoard: View {
             CoupleScene(.cat, .bear, animated: true).frame(maxWidth: 320).frame(maxWidth: .infinity)
             HStack(alignment: .bottom, spacing: 0) {
                 ForEach(Species.allCases, id: \.self) { species in
-                    StandingCreature(species, pose: CreaturePose(turn: species == .bear || species == .rabbit ? -0.15 : 0.2)).frame(maxWidth: .infinity)
+                    StandingCreature(species, pose: species.idlePose).frame(maxWidth: .infinity)
                 }
             }
         }
@@ -267,7 +267,7 @@ private struct WidgetBoard: View {
 
     private func tile(_ species: Species, pose: CritterPose, name: String, icon: Icon, tint: Tint) -> some View {
         VStack(spacing: 0) {
-            StandingCreature(species, pose: pose == .sleeping ? CreaturePose(turn: -0.2, eyes: .content) : CreaturePose(turn: 0.2), animated: false).frame(width: 82).padding(.top, 4)
+            StandingCreature(species, pose: pose == .sleeping ? CreaturePose(tilt: -10, turn: -0.2, eyes: .content, reach: (left: 10, right: 10)) : species.idlePose, animated: false).frame(width: 92).padding(.top, 6)
             HStack(spacing: Space.xs) {
                 IconView(icon: icon, size: 16)
                 Text(name).font(Typeface.caption)
