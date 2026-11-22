@@ -12,12 +12,16 @@ struct IconView: View {
     var body: some View {
         Canvas { ctx, canvas in
             let s = min(canvas.width, canvas.height)
-            let line = max(1.4, s * 0.075)
+            let line = max(1.1, s * 0.058)
             let fit = CGAffineTransform(scaleX: s, y: s)
             for part in icon.parts {
                 let path = part.path.applying(fit)
-                if let fill = part.fill { ctx.fill(path, with: .color(fill)) }
-                if part.ink { ctx.stroke(path, with: .color(Palette.ink), style: StrokeStyle(lineWidth: line * part.weight, lineCap: .round, lineJoin: .round)) }
+                if let fill = part.fill {
+                    let r = path.boundingRect
+                    ctx.fill(path, with: .linearGradient(Gradient(colors: [fill.mix(with: .white, by: 0.32), fill]),
+                                                         startPoint: CGPoint(x: r.midX, y: r.minY), endPoint: CGPoint(x: r.midX, y: r.maxY)))
+                }
+                if part.ink { ctx.stroke(path, with: .color(Palette.iconLine), style: StrokeStyle(lineWidth: line * part.weight, lineCap: .round, lineJoin: .round)) }
             }
         }
         .frame(width: size, height: size)

@@ -1,11 +1,14 @@
 import SwiftUI
 
+/// The two of you, standing in a soft pool of light. Your partner's thought floats above them,
+/// and bumping `react` (when you send love) makes their character light up.
 struct CoupleStage: View {
     var me: Species
     var partner: Species
     var partnerName: String
     var bubble: (icon: Icon, text: String)?
     var tint: Tint = .pink
+    var react = 0
 
     var body: some View {
         VStack(spacing: 0) {
@@ -13,22 +16,30 @@ struct CoupleStage: View {
                 if let bubble {
                     ThoughtBubble(icon: bubble.icon, text: bubble.text, tint: tint)
                 }
-                Spacer()
+                Spacer(minLength: 0)
             }
-            .frame(height: 64, alignment: .bottom)
-            HoldingHands(partner, me).frame(width: 290)
+            .padding(.leading, Space.xxl)
+            .frame(height: 62, alignment: .bottom)
+            HoldingHands(partner, me, animated: true, react: react)
+                .frame(width: 320)
             HStack {
                 Text(partnerName).frame(maxWidth: .infinity)
                 Text("you").frame(maxWidth: .infinity)
             }
-            .font(Typeface.caption)
+            .font(Typeface.tiny)
+            .tracking(1)
+            .textCase(.uppercase)
             .foregroundStyle(Palette.cocoa)
-            .padding(.horizontal, Space.xxl)
+            .padding(.horizontal, 64)
+            .padding(.top, 2)
         }
-        .padding(Space.l)
         .frame(maxWidth: .infinity)
-        .sticker(tint.soft, lip: tint.deep, depth: 5, corner: 30, line: Line.card, seed: 31)
-        .padding(.bottom, 5)
+        .background {
+            Ellipse()
+                .fill(RadialGradient(colors: [Palette.warmWhite.opacity(0.95), tint.soft.opacity(0.55), tint.soft.opacity(0)], center: .center, startRadius: 0, endRadius: 190))
+                .frame(width: 400, height: 300)
+                .offset(y: 16)
+        }
     }
 }
 
@@ -40,7 +51,7 @@ struct EmptyState: View {
 
     var body: some View {
         VStack(spacing: Space.s) {
-            CritterView(species, pose: pose, animated: true).frame(width: 130)
+            CritterView(species, pose: pose, animated: true, interactive: true).frame(width: 132)
             Text(title).font(Typeface.headline)
             Text(message)
                 .font(Typeface.caption)
@@ -58,18 +69,13 @@ struct CritterLoader: View {
     var text = "One sec"
 
     var body: some View {
-        VStack(spacing: Space.xs) {
-            CritterView(species)
-                .frame(width: 96)
-                .phaseAnimator([0, 1, 2]) { view, phase in
-                    view
-                        .offset(y: phase == 1 ? -14 : 0)
-                        .scaleEffect(x: phase == 2 ? 1.06 : 1, y: phase == 2 ? 0.94 : 1, anchor: .bottom)
-                } animation: { phase in
-                    phase == 1 ? .easeOut(duration: 0.28) : .spring(response: 0.26, dampingFraction: 0.5)
-                }
-            Ground(width: 64)
-            Text(text).font(Typeface.caption).foregroundStyle(Palette.cocoa).padding(.top, Space.xs)
+        VStack(spacing: Space.s) {
+            CritterView(species, pose: .sitting, animated: true)
+                .frame(width: 92)
+                .phaseAnimator([false, true]) { view, up in
+                    view.offset(y: up ? -5 : 0)
+                } animation: { _ in .easeInOut(duration: 0.9) }
+            Text(text).font(Typeface.caption).foregroundStyle(Palette.cocoa)
         }
     }
 }

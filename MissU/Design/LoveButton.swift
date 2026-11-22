@@ -4,13 +4,12 @@ struct LoveButton: View {
     var icon: Icon
     var label: String
     var tint: Tint
-    var size: CGFloat = 66
+    var size: CGFloat = 64
     var action: () -> Void = {}
     @State private var sent = 0
 
-    private struct Pop {
+    private struct Bloom {
         var scale: CGFloat = 1
-        var angle: Double = 0
     }
 
     var body: some View {
@@ -19,26 +18,20 @@ struct LoveButton: View {
                 sent += 1
                 action()
             } label: {
-                IconView(icon: icon, size: size * 0.52)
-                    .keyframeAnimator(initialValue: Pop(), trigger: sent) { view, pop in
-                        view.scaleEffect(pop.scale).rotationEffect(.degrees(pop.angle))
+                IconView(icon: icon, size: size * 0.48)
+                    .keyframeAnimator(initialValue: Bloom(), trigger: sent) { view, bloom in
+                        view.scaleEffect(bloom.scale)
                     } keyframes: { _ in
                         KeyframeTrack(\.scale) {
-                            SpringKeyframe(1.38, duration: 0.16)
-                            SpringKeyframe(0.9, duration: 0.14)
-                            SpringKeyframe(1, duration: 0.3)
-                        }
-                        KeyframeTrack(\.angle) {
-                            SpringKeyframe(-12, duration: 0.12)
-                            SpringKeyframe(9, duration: 0.14)
-                            SpringKeyframe(0, duration: 0.3)
+                            CubicKeyframe(1.14, duration: 0.14)
+                            SpringKeyframe(1, duration: 0.45, spring: Spring(response: 0.4, dampingRatio: 0.62))
                         }
                     }
             }
-            .buttonStyle(.round(tint, size: size))
-            .loveBurst(sent, icon: icon == .kiss ? .kiss : .heart)
-            .sensoryFeedback(.success, trigger: sent)
-            Text(label).font(Typeface.caption)
+            .buttonStyle(.orb(tint, size: size))
+            .floatUp(sent, icon: icon == .kiss ? .kiss : .heart)
+            .sensoryFeedback(.impact(weight: .light), trigger: sent)
+            Text(label).font(Typeface.caption).foregroundStyle(Palette.cocoa)
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Send a \(label.lowercased())")
@@ -46,37 +39,48 @@ struct LoveButton: View {
     }
 }
 
-struct LoveBurst: ViewModifier {
+/// A few hearts drifting up and fading, staggered, instead of a burst.
+struct FloatUp: ViewModifier {
     let trigger: Int
     var icon: Icon = .heart
 
-    private struct Puff {
+    private struct Drift {
         var x: CGFloat = 0
         var y: CGFloat = 0
-        var scale: CGFloat = 0.2
+        var scale: CGFloat = 0.6
         var opacity: Double = 0
     }
 
     func body(content: Content) -> some View {
         content.overlay {
             ZStack {
-                ForEach(0..<7, id: \.self) { i in
-                    let angle = -Double.pi / 2 + Double(i - 3) * 0.42
-                    let reach = 58 + CGFloat(i % 3) * 14
-                    IconView(icon: i == 3 ? icon : .heart, size: i.isMultiple(of: 2) ? 18 : 14)
-                        .keyframeAnimator(initialValue: Puff(), trigger: trigger) { view, puff in
-                            view.offset(x: puff.x, y: puff.y).scaleEffect(puff.scale).opacity(puff.opacity)
+                ForEach(0..<3, id: \.self) { i in
+                    IconView(icon: i == 0 ? icon : .heart, size: i == 0 ? 20 : 13)
+                        .keyframeAnimator(initialValue: Drift(), trigger: trigger) { view, d in
+                            view.offset(x: d.x, y: d.y).scaleEffect(d.scale).opacity(d.opacity)
                         } keyframes: { _ in
-                            KeyframeTrack(\.x) { SpringKeyframe(cos(angle) * reach, duration: 0.85) }
-                            KeyframeTrack(\.y) { SpringKeyframe(sin(angle) * reach, duration: 0.85) }
+                            let delay = Double(i) * 0.13
+                            let side: CGFloat = i == 1 ? -1 : (i == 2 ? 1 : 0)
+                            let shown: Double = trigger == 0 ? 0 : 1
+                            KeyframeTrack(\.y) {
+                                LinearKeyframe(0, duration: delay)
+                                CubicKeyframe(-56 - CGFloat(i) * 10, duration: 1.1)
+                            }
+                            KeyframeTrack(\.x) {
+                                LinearKeyframe(0, duration: delay)
+                                CubicKeyframe(side * 10, duration: 0.5)
+                                CubicKeyframe(side * 4, duration: 0.6)
+                            }
                             KeyframeTrack(\.scale) {
-                                SpringKeyframe(1.1, duration: 0.3)
-                                LinearKeyframe(0.7, duration: 0.55)
+                                LinearKeyframe(0.6, duration: delay)
+                                CubicKeyframe(1, duration: 0.3)
+                                CubicKeyframe(0.85, duration: 0.8)
                             }
                             KeyframeTrack(\.opacity) {
-                                LinearKeyframe(trigger == 0 ? 0 : 1, duration: 0.06)
-                                LinearKeyframe(trigger == 0 ? 0 : 1, duration: 0.44)
-                                LinearKeyframe(0, duration: 0.35)
+                                LinearKeyframe(0, duration: delay)
+                                LinearKeyframe(shown, duration: 0.12)
+                                LinearKeyframe(shown, duration: 0.5)
+                                LinearKeyframe(0, duration: 0.45)
                             }
                         }
                 }
@@ -87,7 +91,7 @@ struct LoveBurst: ViewModifier {
 }
 
 extension View {
-    func loveBurst(_ trigger: Int, icon: Icon = .heart) -> some View {
-        modifier(LoveBurst(trigger: trigger, icon: icon))
+    func floatUp(_ trigger: Int, icon: Icon = .heart) -> some View {
+        modifier(FloatUp(trigger: trigger, icon: icon))
     }
 }
