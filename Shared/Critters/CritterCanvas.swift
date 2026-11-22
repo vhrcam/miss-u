@@ -3,7 +3,7 @@ import SwiftUI
 struct CritterCanvas: View {
     let frame: CGRect
     let headroom: CGFloat
-    let draw: (CritterInk) -> Void
+    let draw: (CritterPaint) -> Void
 
     var body: some View {
         Color.clear
@@ -14,7 +14,7 @@ struct CritterCanvas: View {
                     var c = context
                     c.translateBy(x: size.width / 2 - frame.midX * s, y: size.height - frame.maxY * s)
                     c.scaleBy(x: s, y: s)
-                    draw(CritterInk(c, scale: s))
+                    draw(CritterPaint(c, scale: s))
                 }
                 .aspectRatio(frame.width / (frame.height + headroom), contentMode: .fill)
             }

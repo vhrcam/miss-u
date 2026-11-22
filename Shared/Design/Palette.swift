@@ -9,6 +9,16 @@ enum Palette {
     static let cheek = Color(hex: 0xF79882)
     static let earPink = Color(hex: 0xF9A799)
     static let ground = Color(hex: 0x4A2A17).opacity(0.13)
+
+    static let eye = Color(hex: 0x3F2C25)
+    static let mouth = Color(hex: 0x7A5244)
+    static let nose = Color(hex: 0xE3978C)
+    static let shadow = Color(hex: 0x6B4A3A)
+    static let dream = Color(hex: 0xA99BBE)
+    static let heartLight = Color(hex: 0xFFC2CE)
+    static let heartBase = Color(hex: 0xF78CA1)
+    static let heartDeep = Color(hex: 0xE2708A)
+    static let heartLine = Color(hex: 0xC85A73)
 }
 
 struct Tint: Hashable {
