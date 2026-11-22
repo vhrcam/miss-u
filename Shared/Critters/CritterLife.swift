@@ -23,6 +23,14 @@ struct CritterLife {
         return life
     }
 
+    /// How a character answers `r` seconds after a tap or a kiss: a soft squish, happy eyes and a rising heart.
+    static func reaction(_ r: Double, calm: Bool) -> (squash: CGFloat, glee: CGFloat, pop: CGFloat?) {
+        guard r >= 0, r < 1.3 else { return (0, 0, nil) }
+        let glee = CGFloat(r < 0.75 ? 1 : max(0, 1 - (r - 0.75) / 0.4))
+        let squash = calm ? 0 : CGFloat(0.06 * exp(-r * 5.5) * cos(r * 2 * .pi / 0.5))
+        return (squash, glee, CGFloat(r / 1.3))
+    }
+
     static func blink(_ t: Double) -> CGFloat {
         let period = 4.6
         let k = (t / period).rounded(.down)

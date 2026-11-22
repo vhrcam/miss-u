@@ -73,12 +73,10 @@ struct CritterView: View {
                     if p < 0.5, mood == nil { shown = from.mood }
                     if !calm { squash += CGFloat(0.035 * sin(.pi * p)) }
                 }
-                let r = date.timeIntervalSince(tapped)
-                if r >= 0, r < 1.3 {
-                    life.glee = CGFloat(r < 0.75 ? 1 : max(0, 1 - (r - 0.75) / 0.4))
-                    if !calm { squash += CGFloat(0.06 * exp(-r * 5.5) * cos(r * 2 * .pi / 0.5)) }
-                    life.pop = CGFloat(r / 1.3)
-                }
+                let reaction = CritterLife.reaction(date.timeIntervalSince(tapped), calm: calm)
+                squash += reaction.squash
+                life.glee = reaction.glee
+                life.pop = reaction.pop
             }
             paint.squash(squash, around: CGPoint(x: rig.torso.cx, y: rig.torso.bottom))
             paint.critter(species, fur: fur ?? species.fur, rig: rig, mood: shown, life: life)
